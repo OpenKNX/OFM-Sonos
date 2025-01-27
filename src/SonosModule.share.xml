@@ -7,7 +7,10 @@
         <ApplicationProgram>
           <Static>
             <ParameterTypes>
-              <ParameterType Id="%AID%_PT-SonosChannelUsage" Name="SonosChannelUsage">
+              <ParameterType Id="%AID%_PT-SONNumChannels" Name="SONNumChannels">
+								<TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="%N%" />
+							</ParameterType>
+              <ParameterType Id="%AID%_PT-SONSonosChannelUsage" Name="SonosChannelUsage">
                 <TypeRestriction Base="Value" SizeInBit="8">
                   <Enumeration Text="Inaktiv (Konfiguration erhalten)" Value="0" Id="%ENID%" />
                   <Enumeration Text="Inaktiv"                          Value="1" Id="%ENID%" />
@@ -17,38 +20,63 @@
                   <Enumeration Text="Nur Gruppenteilnehmer"            Value="5" Id="%ENID%" />            
                 </TypeRestriction>
               </ParameterType>   
-              <ParameterType Id="%AID%_PT-SonosName" Name="SonosName">
+              <ParameterType Id="%AID%_PT-SONSonosName" Name="SonosName">
                 <TypeText SizeInBit="160" /> <!-- 20 characters -->
               </ParameterType>
-              <ParameterType Id="%AID%_PT-SonosIPAddress" Name="SonosIPAddress">
+              <ParameterType Id="%AID%_PT-SONSonosIPAddress" Name="SonosIPAddress">
                 <TypeIPAddress AddressType="HostAddress" />
               </ParameterType>   
-              <ParameterType Id="%AID%_PT-RelativVolumeStep" Name="RelativVolumeStep">
+              <ParameterType Id="%AID%_PT-SONRelativVolumeStep" Name="RelativVolumeStep">
                 <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="10" />
               </ParameterType>   
-              <ParameterType Id="%AID%_PT-NotificationUri" Name="NotificationUri">
+              <ParameterType Id="%AID%_PT-SONNotificationUri" Name="NotificationUri">
                 <TypeText SizeInBit="1200" /> <!-- 150 characters -->
               </ParameterType>
-              <ParameterType Id="%AID%_PT-NotificationVolume" Name="NotificationVolume">
+              <ParameterType Id="%AID%_PT-SONNotificationVolume" Name="NotificationVolume">
                 <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="100" />
               </ParameterType>
 
             </ParameterTypes>
             <Parameters>
-            <!-- Notification sounds -->
-            <Union SizeInBit="4832">
-                <Memory CodeSegment="%MID%" Offset="0" BitOffset="0" />
-                <Parameter Id="%AID%_UP-%TT%10010" Name="NotificationUrl1" ParameterType="%AID%_PT-NotificationUri" Offset="0" BitOffset="0" Text="URL" Value="https://cdn.freesound.org/previews/555/555016_12434214-lq.mp3" />
-                <Parameter Id="%AID%_UP-%TT%10011" Name="NotificationVolume1" ParameterType="%AID%_PT-NotificationVolume" Offset="150" BitOffset="0" Text="Lautstärke" Value="25" />                
-                <Parameter Id="%AID%_UP-%TT%10020" Name="NotificationUrl2" ParameterType="%AID%_PT-NotificationUri" Offset="151" BitOffset="0" Text="URL" Value="https://cdn.freesound.org/previews/410/410384_2462-lq.mp3" />
-                <Parameter Id="%AID%_UP-%TT%10021" Name="NotificationVolume2" ParameterType="%AID%_PT-NotificationVolume" Offset="301" BitOffset="0" Text="Lautstärke" Value="25" />                
-                <Parameter Id="%AID%_UP-%TT%10030" Name="NotificationUrl3" ParameterType="%AID%_PT-NotificationUri" Offset="302" BitOffset="0" Text="URL" Value="https://cdn.freesound.org/previews/428/428860_8610345-lq.mp3" />
-                <Parameter Id="%AID%_UP-%TT%10031" Name="NotificationVolume3" ParameterType="%AID%_PT-NotificationVolume" Offset="452" BitOffset="0" Text="Lautstärke" Value="25" />                
-                <Parameter Id="%AID%_UP-%TT%10040" Name="NotificationUrl4" ParameterType="%AID%_PT-NotificationUri" Offset="453" BitOffset="0" Text="URL" Value="https://cdn.freesound.org/previews/27/27880_208079-lq.mp3" />
-                <Parameter Id="%AID%_UP-%TT%10041" Name="NotificationVolume4" ParameterType="%AID%_PT-NotificationVolume" Offset="603" BitOffset="0" Text="Lautstärke" Value="25" />                
+            <!-- Base Settings -->
+            <Union SizeInBit="8">
+              <Memory CodeSegment="%MID%" Offset="0" BitOffset="0" />
+              <!-- Number of channels -->
+              <Parameter Id="%AID%_UP-%TT%00000" Name="VisibleChannels" ParameterType="%AID%_PT-SONNumChannels" Offset="0" BitOffset="0" Text="Verfügbare Kanäle" Value="%FCB_NumChannelsDefault%" SuffixText=" von %N%" />
             </Union>
+      
+            <!-- Notification sounds -->
+            <Union SizeInBit="1216">
+                <Memory CodeSegment="%MID%" Offset="1" BitOffset="0" />
+                <Parameter Id="%AID%_UP-%TT%10010" Name="NotificationUrl1" ParameterType="%AID%_PT-SONNotificationUri" Offset="0" BitOffset="0" Text="URL" Value="https://cdn.freesound.org/previews/555/555016_12434214-lq.mp3" />
+                <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->
+                <Parameter Id="%AID%_UP-%TT%10011" Name="NotificationVolume1" ParameterType="%AID%_PT-SONNotificationVolume" Offset="151" BitOffset="0" Text="Lautstärke" Value="25" />                
+            </Union>  
+            <Union SizeInBit="1216">
+                <Memory CodeSegment="%MID%" Offset="152" BitOffset="0" />  
+                <Parameter Id="%AID%_UP-%TT%10020" Name="NotificationUrl2" ParameterType="%AID%_PT-SONNotificationUri" Offset="0" BitOffset="0" Text="URL" Value="https://cdn.freesound.org/previews/410/410384_2462-lq.mp3" />
+                <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->
+                <Parameter Id="%AID%_UP-%TT%10021" Name="NotificationVolume2" ParameterType="%AID%_PT-SONNotificationVolume" Offset="151" BitOffset="0" Text="Lautstärke" Value="25" />   
+            </Union> 
+            <Union SizeInBit="1216">
+                <Memory CodeSegment="%MID%" Offset="304" BitOffset="0" />  
+                <Parameter Id="%AID%_UP-%TT%10030" Name="NotificationUrl3" ParameterType="%AID%_PT-SONNotificationUri" Offset="0" BitOffset="0" Text="URL" Value="https://cdn.freesound.org/previews/428/428860_8610345-lq.mp3" />
+                <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->      
+                <Parameter Id="%AID%_UP-%TT%10031" Name="NotificationVolume3" ParameterType="%AID%_PT-SONNotificationVolume" Offset="452" BitOffset="0" Text="Lautstärke" Value="25" />                
+            </Union> 
+            <Union SizeInBit="1216">
+                <Memory CodeSegment="%MID%" Offset="465" BitOffset="0" />        
+                <Parameter Id="%AID%_UP-%TT%10040" Name="NotificationUrl4" ParameterType="%AID%_PT-SONNotificationUri" Offset="453" BitOffset="0" Text="URL" Value="https://cdn.freesound.org/previews/27/27880_208079-lq.mp3" />
+                <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->      
+                <Parameter Id="%AID%_UP-%TT%10041" Name="NotificationVolume4" ParameterType="%AID%_PT-SONNotificationVolume" Offset="603" BitOffset="0" Text="Lautstärke" Value="25" />                
+            </Union>
+
             </Parameters>
             <ParameterRefs>
+            	<!-- Number of channels -->
+							<ParameterRef Id="%AID%_UP-%TT%00000_R-%TT%0000001" RefId="%AID%_UP-%TT%00000" />
+					
+
               <!--Notification Url 1 -->
               <ParameterRef Id="%AID%_UP-%TT%10010_R-%TT%1001001" RefId="%AID%_UP-%TT%10010" />
               <!--Notification Volume 1 -->
@@ -66,7 +94,7 @@
               
               <!--Notification Url 4 -->
               <ParameterRef Id="%AID%_UP-%TT%10040_R-%TT%1004001" RefId="%AID%_UP-%TT%10040" />
-                <!--Notification Volume 4 -->
+              <!--Notification Volume 4 -->
               <ParameterRef Id="%AID%_UP-%TT%10041_R-%TT%1004101" RefId="%AID%_UP-%TT%10041" />
 
             </ParameterRefs>
@@ -81,48 +109,70 @@
           </Static>
           <Dynamic>
             <Channel Name="MainChannel" Text="Sonos" Number="%TT%" Id="%AID%_CH-%TT%" Icon="speaker">
-              <ParameterBlock Id="%AID%_PB-nnn" Name="Documentation" Text="Dokumentation" Icon="information-outline" >
-                <ParameterSeparator Id="%AID%_PS-nnn" Text="Dokumentation" UIHint="Headline" />
-                <ParameterSeparator Id="%AID%_PS-nnn" Text="Unten im Hilfefenster findest du eine allgemeine Dokumentation zur Sonos Steuerung" />
-                <ParameterSeparator Id="%AID%_PS-nnn" Text="Darüber hinaus sind so weit alle Parameter mit eigenen Hilfetexten versehen, um so die Einrichtung so einfach wie möglich zu gestalten." />
+
+	            <ParameterBlock Id="%AID%_PB-nnn" Name="SonosSettings" Text="Allgemein" Icon="cog-outline" HelpContext="SON-Allgemein">
+
+								<ParameterSeparator Id="%AID%_PS-nnn" Text="Sonos" UIHint="Headline" />
+								<ParameterSeparator Id="%AID%_PS-nnn" Text="Version: %ModuleVersion%" />
+
+								<ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
+
+								<!-- SON Client Kanalauswahl -->
+								<ParameterSeparator Id="%AID%_PS-nnn" Text="Kanalauswahl" UIHint="Headline" />
+								<!-- Kanalanzahl -->
+								<ParameterRefRef RefId="%AID%_UP-%TT%00000_R-%TT%0000001" />
               </ParameterBlock>
 
+
               <!-- Benachrichtungstöne -->
-              <ParameterBlock Id="%AID%_PB-nnn" Name="Notifications" Text="Benachrichtigungstöne" Icon="waveform" HelpContext="Empty">
+              <ParameterBlock Id="%AID%_PB-nnn" Name="Notifications" Text="Benachrichtigungstöne" Icon="waveform" HelpContext="SON-Benachrichtigungstoene">
                 <!-- Benachrichtigung 1 -->
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="Benachrichtgung 1" UIHint="Headline" />
                 <!-- URL -->
-                <ParameterRefRef RefId="%AID%_UP-%TT%10010_R-%TT%1001001" HelpContext="Empty" IndentLevel="1" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%10010_R-%TT%1001001" HelpContext="%DOC%" IndentLevel="1" />
                 <!-- Notification Volume -->
-                <ParameterRefRef RefId="%AID%_UP-%TT%10011_R-%TT%1001101" HelpContext="Empty" IndentLevel="1" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%10011_R-%TT%1001101" HelpContext="%DOC%" IndentLevel="1" />
 
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                  <!-- Benachrichtigung 2 -->
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="Benachrichtgung 3" UIHint="Headline" />
                 <!-- URL -->
-                <ParameterRefRef RefId="%AID%_UP-%TT%10020_R-%TT%1002001" HelpContext="Empty" IndentLevel="1" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%10020_R-%TT%1002001" HelpContext="%DOC%" IndentLevel="1" />
                 <!-- Notification Volume -->
-                <ParameterRefRef RefId="%AID%_UP-%TT%10021_R-%TT%1002101" HelpContext="Empty" IndentLevel="1" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%10021_R-%TT%1002101" HelpContext="%DOC%" IndentLevel="1" />
 
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                 <!-- Benachrichtigung 3 -->
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="Benachrichtgung 3" UIHint="Headline" />
                 <!-- URL -->
-                <ParameterRefRef RefId="%AID%_UP-%TT%10030_R-%TT%1003001" HelpContext="Empty" IndentLevel="1" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%10030_R-%TT%1003001" HelpContext="%DOC%" IndentLevel="1" />
                 <!-- Notification Volume -->
-                <ParameterRefRef RefId="%AID%_UP-%TT%10031_R-%TT%1003101" HelpContext="Empty" IndentLevel="1" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%10031_R-%TT%1003101" HelpContext="%DOC%" IndentLevel="1" />
 
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                 <!-- Benachrichtigung 4 -->
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="Benachrichtgung 4" UIHint="Headline" />
                 <!-- URL -->
-                <ParameterRefRef RefId="%AID%_UP-%TT%10040_R-%TT%1004001" HelpContext="Empty" IndentLevel="1" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%10040_R-%TT%1004001" HelpContext="%DOC%" IndentLevel="1" />
                 <!-- Notification Volume -->
-                <ParameterRefRef RefId="%AID%_UP-%TT%10041_R-%TT%1004101" HelpContext="Empty" IndentLevel="1" />
+                <ParameterRefRef RefId="%AID%_UP-%TT%10041_R-%TT%1004101" HelpContext="%DOC%" IndentLevel="1" />
 
               </ParameterBlock>
    
               <op:include href="SonosModule.templ.xml" xpath="//Dynamic/ChannelIndependentBlock/*" type="template" prefix="SON" IsInner="true" />
+           
+           
+							<!-- More Page -->
+							<choose ParamRefId="%AID%_UP-%TT%00000_R-%TT%0000001">
+								<when test="&lt;%N%">
+									<ParameterBlock Id="%AID%_PB-nnn" Name="SONAdditionalChannels" Text="(mehr)" Icon="dots-horizontal">										<!-- HelpContext="Empty" -->
+										<ParameterSeparator Id="%AID%_PS-nnn" Text="Kanalauswahl" UIHint="Headline" />
+										<ParameterRefRef RefId="%AID%_UP-%TT%00000_R-%TT%0000001" HelpContext="%DOC%" />
+										<!-- HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" /-->
+									</ParameterBlock>
+								</when>
+							</choose>
+
             </Channel>
           </Dynamic>
         </ApplicationProgram>

@@ -7,41 +7,34 @@
         <ApplicationProgram>
           <Static>
             <Parameters>
-              <!-- Sonos Channel Usage -->
-              <Parameter Id="%AID%_P-%TT%%CC%001" Name="CH%C%SonosChannelUsage" ParameterType="%AID%_PT-SonosChannelUsage" Text="Kanal" Value="1">
-                <Memory CodeSegment="%AID%_RS-04-00000" Offset="0" BitOffset="0" />
-              </Parameter>           
-   
               <!-- Sonos Name -->
-              <Parameter Id="%AID%_P-%TT%%CC%002" Name="CH%C%SonosName" ParameterType="%AID%_PT-SonosName" Text="Name" Value="">
-              </Parameter>
-              <!-- Sonos IP -->
-              <Parameter Id="%AID%_P-%TT%%CC%003" Name="CH%C%SonosIPAddress" ParameterType="%AID%_PT-SonosIPAddress" Text="Sonos IP" Value="0.0.0.0">
-                <Memory CodeSegment="%AID%_RS-04-00000" Offset="1" BitOffset="0" />
-              </Parameter>
-                
-              <!-- Relativ Volume Step -->
-              <Parameter Id="%AID%_P-%TT%%CC%004" Name="CH%C%RelativVolumeStep" ParameterType="%AID%_PT-RelativVolumeStep" Text="Relative Lautstärkeänderung" Value="1">
-                <Memory CodeSegment="%AID%_RS-04-00000" Offset="5" BitOffset="0" />
-              </Parameter>
-              
-              <!-- Relativ Group Volume Step -->
-              <Parameter Id="%AID%_P-%TT%%CC%005" Name="CH%C%GroupRelativVolumeStep" ParameterType="%AID%_PT-RelativVolumeStep" Text="Relative Gruppen Lautstärkeänderung" Value="1">
-                <Memory CodeSegment="%AID%_RS-04-00000" Offset="6" BitOffset="0" />
-              </Parameter>
-       
+              <Parameter Id="%AID%_P-%TT%%CC%002" Name="CH%C%SonosName" ParameterType="%AID%_PT-SONSonosName" Text="Name" Value="" />
+          
+              <Union SizeInBit="56">
+                <Memory CodeSegment="%MID%" Offset="0" BitOffset="0" />
+                <!-- Sonos Channel Usage -->
+                <Parameter Id="%AID%_UP-%TT%%CC%001" Offset="0" BitOffset="0" Name="CH%C%SonosChannelUsage" ParameterType="%AID%_PT-SONSonosChannelUsage" Text="Kanal" Value="1" />
+            
+                <!-- Sonos IP -->
+                <Parameter Id="%AID%_UP-%TT%%CC%003" Offset="1" BitOffset="0" Name="CH%C%SonosIPAddress" ParameterType="%AID%_PT-SONSonosIPAddress" Text="Sonos IP" Value="0.0.0.0" />
+                <!-- Relativ Volume Step -->
+                <Parameter Id="%AID%_UP-%TT%%CC%004" Offset="5" BitOffset="0" Name="CH%C%RelativVolumeStep" ParameterType="%AID%_PT-SONRelativVolumeStep" Text="Relative Lautstärkeänderung" Value="1" />
+                <!-- Relativ Group Volume Step -->
+                <Parameter Id="%AID%_UP-%TT%%CC%005" Offset="6" BitOffset="0" Name="CH%C%GroupRelativVolumeStep" ParameterType="%AID%_PT-SONRelativVolumeStep" Text="Relative Gruppen Lautstärkeänderung" Value="1" />
+              </Union>
             </Parameters>
+
             <ParameterRefs>
               <!-- Sonos Channel Usage -->
-              <ParameterRef Id="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" RefId="%AID%_P-%TT%%CC%001" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%001_R-%TT%%CC%00101" RefId="%AID%_UP-%TT%%CC%001" />
               <!-- Sonos Name -->
               <ParameterRef Id="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" RefId="%AID%_P-%TT%%CC%002" />
               <!-- Sonos IP -->
-              <ParameterRef Id="%AID%_P-%TT%%CC%003_R-%TT%%CC%00301" RefId="%AID%_P-%TT%%CC%003" />  
+              <ParameterRef Id="%AID%_UP-%TT%%CC%003_R-%TT%%CC%00301" RefId="%AID%_UP-%TT%%CC%003" />  
               <!-- Relativ Volume Step -->
-              <ParameterRef Id="%AID%_P-%TT%%CC%004_R-%TT%%CC%00401" RefId="%AID%_P-%TT%%CC%004" />  
+              <ParameterRef Id="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00401" RefId="%AID%_UP-%TT%%CC%004" />  
               <!-- Relativ Group Volume Step -->
-              <ParameterRef Id="%AID%_P-%TT%%CC%005_R-%TT%%CC%00501" RefId="%AID%_P-%TT%%CC%005" />  
+              <ParameterRef Id="%AID%_UP-%TT%%CC%005_R-%TT%%CC%00501" RefId="%AID%_UP-%TT%%CC%005" />  
             </ParameterRefs>
             <ComObjectTable>
               <!-- Volume Percentage -->
@@ -146,25 +139,25 @@
           </Static>
           <Dynamic>
             <ChannelIndependentBlock> 
-              <ParameterBlock Id="%AID%_PB-%C%1" Name="Sonos%C%Page" Text="Sonos %C%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" Icon="speaker" HelpContext="Empty">
+              <ParameterBlock Id="%AID%_PB-%C%1" Name="Sonos%C%Page" Text="Sonos %C%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" Icon="speaker" HelpContext="SON-Sonos">
                 <Channel Id="%AID%_CH-SON%CC%" Name="f%CC%SON" Number="SON%CC%" Text="Sonsos %CC%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201">
                   <ParameterBlock Id="%AID%_PB-%TT%%CC%01" Name="SON%C%Wrapper" Inline="true">
                     <ParameterSeparator Id="%AID%_PS-nnn" Text="Sonos Konfiguration" UIHint="Headline" />
                       <!-- Parameter Sonos Channel Usage -->
-                      <ParameterRefRef RefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" /> 
+                      <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%001_R-%TT%%CC%00101" HelpContext="%DOC%" /> 
 
-                      <choose ParamRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101">  <!--Sonos Channel Usage  -->
+                      <choose ParamRefId="%AID%_UP-%TT%%CC%001_R-%TT%%CC%00101">  <!--Sonos Channel Usage  -->
                         <when test="!=1" >  <!-- active -->
                           <!-- Parameter Sonos Name -->
-                          <ParameterRefRef RefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" /> 
+                          <ParameterRefRef IndentLevel="1" RefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" HelpContext="%DOC%" /> 
                           <!-- Parameter Sonos IP -->
-                          <ParameterRefRef RefId="%AID%_P-%TT%%CC%003_R-%TT%%CC%00301" /> 
+                          <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%003_R-%TT%%CC%00301" HelpContext="%DOC%" /> 
                         </when>
                         <when test="0 2 4" >  <!-- Einzelsteuerung -->
                           <ParameterSeparator Id="%AID%_PS-nnn" Text="Einzelsteuerung" UIHint="Headline" />
 
                           <!-- Relativ Volume Step -->
-                          <ParameterRefRef RefId="%AID%_P-%TT%%CC%004_R-%TT%%CC%00401" /> 
+                          <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00401" HelpContext="%DOC%" /> 
 
                           <!-- KO Volume Percentage -->
                           <ComObjectRefRef RefId="%AID%_O-%TT%%CC%000_R-%TT%%CC%00001" />
@@ -192,7 +185,7 @@
                           <ParameterSeparator Id="%AID%_PS-nnn" Text="Gruppensteuerung" UIHint="Headline" />
 
                           <!-- Group Relativ Volume Step -->
-                          <ParameterRefRef RefId="%AID%_P-%TT%%CC%005_R-%TT%%CC%00501" /> 
+                          <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%005_R-%TT%%CC%00501" HelpContext="%DOC%" /> 
             
                           <!-- Group Volume Percentage -->       
                           <ComObjectRefRef RefId="%AID%_O-%TT%%CC%009_R-%TT%%CC%00901" />

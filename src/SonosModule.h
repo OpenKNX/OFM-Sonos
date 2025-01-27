@@ -3,7 +3,6 @@
 #include "ChannelOwnerModule.h"
 #include "SonosApi.h"
 #if USE_ESP_ASNC_WEB_SERVER 
-#include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #endif
 #ifndef OPENKNX_DUALCORE

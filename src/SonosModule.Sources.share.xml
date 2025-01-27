@@ -7,7 +7,7 @@
         <ApplicationProgram>
           <Static>
             <ParameterTypes>
-              <ParameterType Id="%AID%_PT-SourceType" Name="SourceType">
+              <ParameterType Id="%AID%_PT-SONSourceType" Name="SourceType">
                 <TypeRestriction Base="Value" SizeInBit="7">
                   <Enumeration Text="Inaktiv" Value="0" Id="%ENID%" />
                   <Enumeration Text="Radio Stream" Value="1" Id="%ENID%" />
@@ -20,10 +20,10 @@
                   <Enumeration Text="Sonos Uri"  Value="8" Id="%ENID%" />
                 </TypeRestriction>
               </ParameterType>
-              <ParameterType Id="%AID%_PT-SourceUri" Name="SourceUri">
+              <ParameterType Id="%AID%_PT-SONSourceUri" Name="SourceUri">
                 <TypeText SizeInBit="1200" /> <!-- 150 characters -->
               </ParameterType>
-              <ParameterType Id="%AID%_PT-SourceTitle" Name="SourceTitle">
+              <ParameterType Id="%AID%_PT-SONSourceTitle" Name="SourceTitle">
                 <TypeText SizeInBit="160" /> <!-- 20 characters -->
               </ParameterType>
             </ParameterTypes>

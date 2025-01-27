@@ -86,13 +86,13 @@ bool SonosModule::processCommand(const std::string cmd, bool diagnoseKo)
             auto channelCmd = channelString.substr(pos + 1);
             if (channel < 1 || channel > getNumberOfChannels())
             {
-                Serial.printf("Channel not %d found\r\n", channel);
+                logInfoP("Channel not %d found\r\n", channel);
                 return true;
             }
             auto sonosChannel = (SonosChannel*) getChannel(channel - 1);
             if (sonosChannel == nullptr)
             {
-                Serial.printf("Channel not %d activated\r\n", channel);
+                logInfoP("Channel not %d activated\r\n", channel);
                 return true;
             }
             return sonosChannel->processCommand(channelCmd, diagnoseKo);

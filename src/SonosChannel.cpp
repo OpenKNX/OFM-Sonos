@@ -11,7 +11,7 @@ SonosChannel::SonosChannel(SonosModule& sonosModule, uint8_t _channelIndex /* th
     IPAddress speakerIP = IPAddress(arduinoIP);
     _sonosSpeaker = sonosApi.addSpeaker(speakerIP);
     _name = speakerIP.toString();
-#if USE_ESP_ASNC_WEB_SERVER
+#ifndef SONOS_DISABLE_CALLBACK
     _sonosSpeaker->setCallback(this);
 #endif
 }
