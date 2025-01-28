@@ -33,7 +33,7 @@
             </ParameterRefs>
           </Static>
           <Dynamic>
-            <Channel Name="MainChannel" Text="Tonquellen" Number="%TT%" Id="%AID%_CH-%TT%" Icon="waveform">
+            <Channel Name="MainChannel" Text="Sonos Tonquellen" Number="%TT%" Id="%AID%_CH-%TT%" Icon="waveform">
               <op:include href="SonosModule.Sources.templ.xml" xpath="//Dynamic/ChannelIndependentBlock/*" type="template" prefix="SONSRC" IsInner="true" />
             </Channel>
         </Dynamic>

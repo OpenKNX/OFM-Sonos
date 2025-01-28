@@ -1,4 +1,0 @@
-﻿### Tonquelle
-
-Defintion einer Tonquelle.
-

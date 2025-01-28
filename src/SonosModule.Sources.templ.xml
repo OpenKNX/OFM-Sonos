@@ -57,7 +57,7 @@
           </Static>
           <Dynamic>
             <ChannelIndependentBlock> 
-              <ParameterBlock Id="%AID%_PB-%C%2" Name="Sonos%C%Sources" Text="Tonquelle %C%" Icon="waveform" HelpContext="SON-Tonquelle">
+              <ParameterBlock Id="%AID%_PB-%C%2" Name="Sonos%C%Sources" Text="Tonquelle %C%" Icon="waveform" HelpContext="SON-SonosTonquellen">
                 <Channel Id="%AID%_CH-SONSRC%CC%" Name="f%CC%SONSRCSource" Number="SON%CC%" Text="Tonquelle %C%" >
                   <ParameterBlock Id="%AID%_PB-%TT%%CC%01" Name="SON%C%SourceWrapper" Inline="true">
                     <!-- Tonquelle 1 -->

@@ -3,12 +3,13 @@
 
 # Applikationsbeschreibung Sonos
 
-<!-- DOCEND -->
-## Tonquellen
+Die Anwendung besteht aus der Definition der Sonos Tonquellen und der Sonos Lautsprecher.
+
+<!-- DOC HelpContext="SonosTonquellen" -->
+# Sonos Tonquellen
 
 Es können mehrere Tonquellen definiert werden, die über ein Objekt abgespielt werden könnnen.
 
-<!-- DOC -->
 ### Tonquelle
 
 Defintion einer Tonquelle.
@@ -146,39 +147,96 @@ Dieser Parameter ist optional.
 
 Stellt die Sonos URI mehrere Title bereit, werden diese bei aktivierter Option in zufälliger Reihenfolge wiedergegeben.
 
+<!-- DOC -->
+# Sonos Lautsprecher
+
+In diesem Abschnitt werden die Sonos Lautsprecher definiert.
+Es müssen alle Sonos Lautsprecher definiert werden, ausgenommen Stereopaare.
+Bei Stereopaaren wird nur einer der Lautsprecher definiert.
 
 <!-- DOC -->
-### Allgemein 
+## Allgemein 
+
+In diesem Abschnitt werden die Basiseinstellungen des Moduls vorgenommen.
 
 <!-- DOC -->
-### Benachrichtigungstöne
+### Anzahl der Lautsprecher
+
+Die Anzahl der Sonos Lautsprecher.
+Stereopaare zählen als ein Lautsprecher.
+
+Es müssen alle Sonos Lautsprecher definiert werden.
+
+Hinweis:
+Die Liste aller Sonos ist notwendig, damit die Gruppenumschaltungen richtig erfolgen.
+Soll ein Lautsprecher nicht über KNX gesteuert werden, kann dieser als "Nur Gruppenteilnehmer" definiert werden.
+
+### Benachrichtung 1-4
+
+Es können 4 Benachrichtungstöne konfiguriert werden die über ein Objekt aktiviert werden.
+
+<!-- DOC HelpContext="NotificationUrl" -->
+#### URL
+
+URL auf eine MP3-Datei.
+
+Beispiele:
+
+https://cdn.freesound.org/previews/555/555016_12434214-lq.mp3
+https://cdn.freesound.org/previews/410/410384_2462-lq.mp3
+https://cdn.freesound.org/previews/428/428860_8610345-lq.mp3
+https://cdn.freesound.org/previews/27/27880_208079-lq.mp3
+
+<!-- DOC HelpContext="NotificationVolume" -->
+#### Lautstärke
+
+Lautstärke für die Benachrichtigung.
 
 <!-- DOC -->
-### URL
+### Verwendung
 
-<!-- DOC -->
-### Lautstärke
+Einstellung:
 
+- **Inaktiv**
+der Kanal wird nicht verwendet
 
-<!-- DOC -->
-## Sonos
+- **Einzelsteuerung**
+der Kanal wird zum Steueren eines einzeln Lautsprechers verwendet.
 
-<!-- DOC -->
-## Verfuegbare Kanäle
+- **Gruppensteuerung**
+der Kanal wird zur Steuerung einer Sonosgruppe verwendet.
 
-<!-- DOC -->
-### Kanal
+- **Einzel- und Gruppensteurung**
+der Kanal wird zum Steuern eines einzeln Lautsprechers und zur Steuerung einer Gruppe verwendet.
+
+- **Nur Gruppenteilnehmer**
+Der Lautsprecher wird über KNX nicht verwendet. 
+Die Konfiguration dient dazu, dass der Lautsprecher als Gruppenteilnehmer verwendet werden kann.
 
 <!-- DOC -->
 ### Name
 
+Name des Sonos Lautsprecher.
+Erleichert die KNX Konfiguration da beispielsweise die Objekte und Kanäle den Namen verwenden.
+
 <!-- DOC -->
 ### Sonos-IP
+
+Die IP-Adresse des Sonos-Lautsprechers
+
+<!-- DOC -->
+### Kanal deaktivieren (zu Testzwecken)
+
+Der Kanal wird deaktivert, die Konfiguration bleibt jedoch erhalten
 
 <!-- DOC -->
 ### Relative-Lautstaerkeänderung
 
+Die relative Lautstärkeänderung in Prozent bei Verwendung des Eingangs "Lautstärke Verringern/Erhöhen"
+
 <!-- DOC -->
 ### Relative Gruppen Lautstärkeänderung
+
+Die relative Lautstärkeänderung der Gruppe in Prozent bei Verwendung des Eingangs "Gruppenlautstärke Verringern/Erhöhen"
 
 

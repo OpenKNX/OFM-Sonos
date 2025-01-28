@@ -1,2 +1,0 @@
-﻿### Verfuegbare Kanäle
-

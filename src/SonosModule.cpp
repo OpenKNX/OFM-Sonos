@@ -23,6 +23,8 @@ OpenKNX::Channel *SonosModule::createChannel(uint8_t _channelIndex /* this param
 {
     if (ParamSON_CHSonosChannelUsage <= 1)
         return nullptr;
+    if (ParamSON_CHChannelDisabled)
+        return nullptr;
 
     auto channel = new SonosChannel(*this, _channelIndex, _sonosApi);
     if (firstChannel == nullptr)
