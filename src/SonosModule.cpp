@@ -1,6 +1,7 @@
 #include "SonosModule.h"
 #include "SonosChannel.h"
 #include "NetworkModule.h"
+#include "WiFi.h"
 
 SonosModule::SonosModule()
     : SonosChannelOwnerModule(SON_ChannelCount)
@@ -34,7 +35,9 @@ OpenKNX::Channel *SonosModule::createChannel(uint8_t _channelIndex /* this param
 
 void SonosModule::setup()
 {
-    
+#ifdef OPENKNX_SONOS_DEBUG
+    _sonosApi.setDebugSerial(&Serial);
+#endif
 }
 
 void SonosModule::setup1()
@@ -158,6 +161,7 @@ bool SonosModule::restorePower()
 
 void SonosModule::loop()
 {
+    _sonosApi.setLANNetworkConnected(openknxNetwork.established(), openknxNetwork.localIP());
     _sonosApi.loop();
     bool connected = openknxNetwork.established();
     if (!connected)

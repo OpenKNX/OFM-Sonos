@@ -57,60 +57,65 @@
           </Static>
           <Dynamic>
             <ChannelIndependentBlock> 
-              <ParameterBlock Id="%AID%_PB-%C%2" Name="Sonos%C%Sources" Text="Tonquelle %C%" Icon="waveform" HelpContext="SON-SonosTonquellen">
-                <Channel Id="%AID%_CH-SONSRC%CC%" Name="f%CC%SONSRCSource" Number="SON%CC%" Text="Tonquelle %C%" >
-                  <ParameterBlock Id="%AID%_PB-%TT%%CC%01" Name="SON%C%SourceWrapper" Inline="true">
-                    <!-- Tonquelle 1 -->
-                  <ParameterSeparator Id="%AID%_PS-nnn" Text="Tonquelle %C%" UIHint="Headline" />
-                  <!-- Source Type -->
-                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%001_R-%TT%%CC%00101" HelpContext="SON-Quellenart" IndentLevel="1" />
-                  <choose ParamRefId="%AID%_UP-%TT%%CC%001_R-%TT%%CC%00101">  <!-- Source Type -->
-                    <when test="1" >  <!-- Radio -->
-                      <!-- Stream Url-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00401" HelpContext="SON-StreamUrl" IndentLevel="1" />
-                      <!-- Title-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%003_R-%TT%%CC%00301" HelpContext="SON-StreamTitle" IndentLevel="1" />
-                      <!-- Image Url-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%005_R-%TT%%CC%00501" HelpContext="SON-StreamImageUrl" IndentLevel="1" />
-                    </when>  <!-- Radio -->
-                    <when test="2" >  <!-- http -->
-                      <!-- Url-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00402" HelpContext="SON-HTTPUrl" IndentLevel="1" />
-                    </when>  <!-- http -->
-                    <when test="3" >  <!-- Network File -->
-                      <!-- Network file-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00403" HelpContext="SON-Netzwerkdatei" IndentLevel="1" />
-                    </when>  <!-- Network File -->
-                    <when test="4" >  <!-- Network Directory -->
-                      <!-- Network directory-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00404" HelpContext="SON-Verzeichnis" IndentLevel="1" />
-                      <!-- Random-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%002_R-%TT%%CC%00201" HelpContext="SON-VerzeichnisZufallswiedergabe" IndentLevel="1" />
-                    </when>  <!-- Network Directory -->
-                    <when test="5" >  <!-- Line In -->
-                    </when>  <!-- Line In -->
-                    <when test="6" >  <!-- TV In -->
-                    </when>  <!-- Line In -->
-                    <when test="7" >  <!-- Sonos Playlist -->
-                      <!-- Sonos playlist-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00407" HelpContext="SON-Playlist" IndentLevel="1" />                
-                      <!-- Random-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%002_R-%TT%%CC%00201" HelpContext="SON-PlaylistZufallswiedergabe" IndentLevel="1" />
-                    </when>  <!-- Sonos playlist -->
-                    <when test="8" >  <!-- Sonos URI -->
-                      <!-- Uri-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00408" HelpContext="SON-SonosUri" IndentLevel="1" />
-                      <!-- Title-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%003_R-%TT%%CC%00301" HelpContext="SON-SonosTitle" IndentLevel="1" />
-                      <!-- Image Url-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%005_R-%TT%%CC%00501" HelpContext="SON-SonsosImageUrl" IndentLevel="1" />
-                      <!-- Random-->
-                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%002_R-%TT%%CC%00201" HelpContext="SON-SonosZufallswiedergabe" IndentLevel="1" />
-                    </when>  <!-- Sonos URI -->
-                    </choose> <!-- Source Type -->
+              <!-- Anzahl der Kanäle -->
+              <choose ParamRefId="%AID%_UP-%TT%00000_R-%TT%0000001">
+                <when test="&gt;=%C%">
+                  <ParameterBlock Id="%AID%_PB-%C%2" Name="Sonos%C%Sources" Text="Tonquelle %C%" Icon="waveform" HelpContext="SON-SonosTonquellen">
+                    <Channel Id="%AID%_CH-SONSRC%CC%" Name="f%CC%SONSRCSource" Number="SON%CC%" Text="Tonquelle %C%" >
+                      <ParameterBlock Id="%AID%_PB-%TT%%CC%01" Name="SON%C%SourceWrapper" Inline="true">
+                        <!-- Tonquelle 1 -->
+                      <ParameterSeparator Id="%AID%_PS-nnn" Text="Tonquelle %C%" UIHint="Headline" />
+                      <!-- Source Type -->
+                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%001_R-%TT%%CC%00101" HelpContext="SON-Quellenart" IndentLevel="1" />
+                      <choose ParamRefId="%AID%_UP-%TT%%CC%001_R-%TT%%CC%00101">  <!-- Source Type -->
+                        <when test="1" >  <!-- Radio -->
+                          <!-- Stream Url-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00401" HelpContext="SON-StreamUrl" IndentLevel="1" />
+                          <!-- Title-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%003_R-%TT%%CC%00301" HelpContext="SON-StreamTitle" IndentLevel="1" />
+                          <!-- Image Url-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%005_R-%TT%%CC%00501" HelpContext="SON-StreamImageUrl" IndentLevel="1" />
+                        </when>  <!-- Radio -->
+                        <when test="2" >  <!-- http -->
+                          <!-- Url-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00402" HelpContext="SON-HTTPUrl" IndentLevel="1" />
+                        </when>  <!-- http -->
+                        <when test="3" >  <!-- Network File -->
+                          <!-- Network file-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00403" HelpContext="SON-Netzwerkdatei" IndentLevel="1" />
+                        </when>  <!-- Network File -->
+                        <when test="4" >  <!-- Network Directory -->
+                          <!-- Network directory-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00404" HelpContext="SON-Verzeichnis" IndentLevel="1" />
+                          <!-- Random-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%002_R-%TT%%CC%00201" HelpContext="SON-VerzeichnisZufallswiedergabe" IndentLevel="1" />
+                        </when>  <!-- Network Directory -->
+                        <when test="5" >  <!-- Line In -->
+                        </when>  <!-- Line In -->
+                        <when test="6" >  <!-- TV In -->
+                        </when>  <!-- Line In -->
+                        <when test="7" >  <!-- Sonos Playlist -->
+                          <!-- Sonos playlist-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00407" HelpContext="SON-Playlist" IndentLevel="1" />                
+                          <!-- Random-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%002_R-%TT%%CC%00201" HelpContext="SON-PlaylistZufallswiedergabe" IndentLevel="1" />
+                        </when>  <!-- Sonos playlist -->
+                        <when test="8" >  <!-- Sonos URI -->
+                          <!-- Uri-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%004_R-%TT%%CC%00408" HelpContext="SON-SonosUri" IndentLevel="1" />
+                          <!-- Title-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%003_R-%TT%%CC%00301" HelpContext="SON-SonosTitle" IndentLevel="1" />
+                          <!-- Image Url-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%005_R-%TT%%CC%00501" HelpContext="SON-SonsosImageUrl" IndentLevel="1" />
+                          <!-- Random-->
+                          <ParameterRefRef RefId="%AID%_UP-%TT%%CC%002_R-%TT%%CC%00201" HelpContext="SON-SonosZufallswiedergabe" IndentLevel="1" />
+                        </when>  <!-- Sonos URI -->
+                        </choose> <!-- Source Type -->
+                      </ParameterBlock>
+                    </Channel>
                   </ParameterBlock>
-                </Channel>
-              </ParameterBlock>
+                </when>
+              </choose>
             </ChannelIndependentBlock>
           </Dynamic>
         </ApplicationProgram>

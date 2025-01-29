@@ -11,6 +11,8 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         SonosModule& _sonosModule;
         SonosSpeaker* _sonosSpeaker;
         String _name;
+        bool _singleControl;
+        bool _groupControl;
         void notificationVolumeChanged(SonosSpeaker* speaker, uint8_t volume) override;
         void notificationMuteChanged(SonosSpeaker* speaker, boolean mute) override;
         void notificationGroupVolumeChanged(SonosSpeaker* speaker, uint8_t volume) override;

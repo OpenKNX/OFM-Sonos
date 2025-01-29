@@ -3,4 +3,3 @@
 Schaltet auf den TV Eingang.
 Diese Option funktioniert nur am Sonos Playbar.
 
-

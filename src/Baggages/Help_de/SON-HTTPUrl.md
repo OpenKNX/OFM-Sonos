@@ -1,4 +1,4 @@
 ﻿### URL
 
-Die URL der HTTP Audio Datei.
+Die URL der Audio Datei (z.B. MP3).
 

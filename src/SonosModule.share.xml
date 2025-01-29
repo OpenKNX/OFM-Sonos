@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-model href="../../Organization/knxprod-support/knx_project_14/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/14" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
+  <op:config name="%SON_NumChannelsDefault%" value="0" />
   <ManufacturerData>
     <Manufacturer>
       <ApplicationPrograms>
@@ -41,7 +42,7 @@
             <Union SizeInBit="8">
               <Memory CodeSegment="%MID%" Offset="0" BitOffset="0" />
               <!-- Number of channels -->
-              <Parameter Id="%AID%_UP-%TT%00000" Name="VisibleChannels" ParameterType="%AID%_PT-SONNumChannels" Offset="0" BitOffset="0" Text="Anzahl der Lautsprecher" Value="%FCB_NumChannelsDefault%" SuffixText=" von %N%" />
+              <Parameter Id="%AID%_UP-%TT%00000" Name="VisibleChannels" ParameterType="%AID%_PT-SONNumChannels" Offset="0" BitOffset="0" Text="Anzahl der Lautsprecher" Value="%SON_NumChannelsDefault%" SuffixText=" von %N%" />
             </Union>
       
             <!-- Notification sounds -->
@@ -120,7 +121,10 @@
 								<ParameterSeparator Id="%AID%_PS-nnn" Text="Kanalauswahl" UIHint="Headline" />
 								
                 <!-- Kanalanzahl -->
-								<ParameterRefRef RefId="%AID%_UP-%TT%00000_R-%TT%0000001" HelpContext="%DOC%" />
+								<ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%00000_R-%TT%0000001" HelpContext="%DOC%" />
+
+                <ParameterSeparator IndentLevel="1" Id="%AID%_PS-nnn" Text="Es muss jeder Sonos Lautsprecher definiert werden, auch dann wenn keine direkte Steuerung geplant ist. Stereopaare zählen als ein Lautsprecher." UIHint="Information" />
+                  
             
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
              
@@ -162,9 +166,13 @@
 							<!-- More Page -->
 							<choose ParamRefId="%AID%_UP-%TT%00000_R-%TT%0000001">
 								<when test="&lt;%N%">
-									<ParameterBlock Id="%AID%_PB-nnn" Name="SONAdditionalChannels" Text="(mehr)" Icon="dots-horizontal">										<!-- HelpContext="Empty" -->
-										<ParameterSeparator Id="%AID%_PS-nnn" Text="Kanalauswahl" UIHint="Headline" />
-										<ParameterRefRef RefId="%AID%_UP-%TT%00000_R-%TT%0000001" HelpContext="%DOC%" />
+									<ParameterBlock Id="%AID%_PB-nnn" Name="SONAdditionalChannels" Text="(mehr)" Icon="dots-horizontal" HelpContext="SON-Mehr-Lautsprecher" >
+										<ParameterSeparator Id="%AID%_PS-nnn" Text="Lautsprecher" UIHint="Headline" />
+										<!-- Kanalanzahl -->
+                    <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%00000_R-%TT%0000001" HelpContext="%DOC%" />
+
+                    <ParameterSeparator IndentLevel="1" Id="%AID%_PS-nnn" Text="Es muss jeder Sonos Lautsprecher definiert werden, auch dann wenn keine direkte Steuerung geplant ist. Stereopaare zählen als ein Lautsprecher." UIHint="Information" />
+               
 										<!-- HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" /-->
 									</ParameterBlock>
 								</when>

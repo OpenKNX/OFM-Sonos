@@ -14,6 +14,6 @@
         "url": "https://github.com/OpenKNX/OFM-Sonos"
     },
     "dependencies": {
-         "mgeramb/SonosArduinoLocalUpnpAPI": "https://github.com/mgeramb/SonosArduinoLocalUpnpAPI.git@^0.0.6"
-    }
+         "mgeramb/SonosArduinoLocalUpnpAPI": "https://github.com/mgeramb/SonosArduinoLocalUpnpAPI.git@^0.0.7"
+      }
 }

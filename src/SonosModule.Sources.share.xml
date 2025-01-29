@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-model href="../../Organization/knxprod-support/knx_project_14/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/14" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
+  <op:config name="%SONSRC_NumChannelsDefault%" value="0" />
   <ManufacturerData>
     <Manufacturer>
       <ApplicationPrograms>
         <ApplicationProgram>
           <Static>
             <ParameterTypes>
+              <ParameterType Id="%AID%_PT-SONSRCNumChannels" Name="SONSRCNumChannels">
+								<TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="%N%" />
+							</ParameterType>  
               <ParameterType Id="%AID%_PT-SONSourceType" Name="SourceType">
                 <TypeRestriction Base="Value" SizeInBit="7">
                   <Enumeration Text="Inaktiv" Value="0" Id="%ENID%" />
@@ -28,14 +32,42 @@
               </ParameterType>
             </ParameterTypes>
             <Parameters>
+              <Union SizeInBit="8">
+                <Memory CodeSegment="%MID%" Offset="0" BitOffset="0" />
+                <!-- Number of channels -->
+                <Parameter Id="%AID%_UP-%TT%00000" Name="VisibleChannels" ParameterType="%AID%_PT-SONSRCNumChannels" Offset="0" BitOffset="0" Text="Anzahl der Tonquellen" Value="%SONSRC_NumChannelsDefault%" SuffixText=" von %N%" />
+              </Union>
             </Parameters>
             <ParameterRefs>
+              <!-- Number of channels -->
+              <ParameterRef Id="%AID%_UP-%TT%00000_R-%TT%0000001" RefId="%AID%_UP-%TT%00000" />
             </ParameterRefs>
           </Static>
           <Dynamic>
             <Channel Name="MainChannel" Text="Sonos Tonquellen" Number="%TT%" Id="%AID%_CH-%TT%" Icon="waveform">
+
+              <ParameterBlock Id="%AID%_PB-nnn" Name="SonosSettings" Text="Allgemein" Icon="cog-outline" HelpContext="SON-SonosTonquellen">
+
+								<ParameterSeparator Id="%AID%_PS-nnn" Text="Sonos Tonquellen" UIHint="Headline" />
+									
+                <!-- Kanalanzahl -->
+								<ParameterRefRef RefId="%AID%_UP-%TT%00000_R-%TT%0000001" HelpContext="SON-Anzahl-der-Tonquellen" />
+              </ParameterBlock>
+
               <op:include href="SonosModule.Sources.templ.xml" xpath="//Dynamic/ChannelIndependentBlock/*" type="template" prefix="SONSRC" IsInner="true" />
+           
+              <!-- More Page -->
+						  <choose ParamRefId="%AID%_UP-%TT%00000_R-%TT%0000001">
+                <when test="&lt;%N%">
+                  <ParameterBlock Id="%AID%_PB-nnn" Name="SONSRCAdditionalChannels" Text="(mehr)" Icon="dots-horizontal" HelpContext="SON-Mehr-Tonquellen" >										<!-- HelpContext="Empty" -->
+                    <ParameterSeparator Id="%AID%_PS-nnn" Text="Tonquellen" UIHint="Headline" />
+                    <!-- Number of channels -->
+                  <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%00000_R-%TT%0000001" HelpContext="SON-Anzahl-der-Tonquellen" />
+                </ParameterBlock>
+              </when>
+              </choose>
             </Channel>
+
         </Dynamic>
         </ApplicationProgram>
       </ApplicationPrograms>
