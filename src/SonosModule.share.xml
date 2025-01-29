@@ -123,7 +123,7 @@
                 <!-- Kanalanzahl -->
 								<ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%00000_R-%TT%0000001" HelpContext="%DOC%" />
 
-                <ParameterSeparator IndentLevel="1" Id="%AID%_PS-nnn" Text="Es muss jeder Sonos Lautsprecher definiert werden, auch dann wenn keine direkte Steuerung geplant ist. Stereopaare zählen als ein Lautsprecher." UIHint="Information" />
+                <ParameterSeparator Id="%AID%_PS-nnn" Text="Es muss jeder Sonos Lautsprecher definiert werden, auch dann wenn keine direkte Steuerung geplant ist. Stereopaare zählen als ein Lautsprecher." UIHint="Information" />
                   
             
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
@@ -171,7 +171,7 @@
 										<!-- Kanalanzahl -->
                     <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%00000_R-%TT%0000001" HelpContext="%DOC%" />
 
-                    <ParameterSeparator IndentLevel="1" Id="%AID%_PS-nnn" Text="Es muss jeder Sonos Lautsprecher definiert werden, auch dann wenn keine direkte Steuerung geplant ist. Stereopaare zählen als ein Lautsprecher." UIHint="Information" />
+                    <ParameterSeparator Id="%AID%_PS-nnn" Text="Es muss jeder Sonos Lautsprecher definiert werden, auch dann wenn keine direkte Steuerung geplant ist. Stereopaare zählen als ein Lautsprecher." UIHint="Information" />
                
 										<!-- HelpContext="BASE-Verfuegbare-Kanaele" IndentLevel="1" /-->
 									</ParameterBlock>
