@@ -137,7 +137,7 @@
 
                 <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                  <!-- Benachrichtigung 2 -->
-                <ParameterSeparator Id="%AID%_PS-nnn" Text="Benachrichtgung 3" UIHint="Headline" />
+                <ParameterSeparator Id="%AID%_PS-nnn" Text="Benachrichtgung 2" UIHint="Headline" />
                 <!-- URL -->
                 <ParameterRefRef RefId="%AID%_UP-%TT%10020_R-%TT%1002001" HelpContext="SON-NotificationUrl" IndentLevel="1" />
                 <!-- Notification Volume -->
