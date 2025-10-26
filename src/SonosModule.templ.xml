@@ -148,7 +148,7 @@
                 <when test="&gt;=%C%">
               
                   <ParameterBlock Id="%AID%_PB-%C%1" Name="Sonos%C%Page" Text="Sonos %C%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" Icon="speaker" HelpContext="SON-Sonos-Lautsprecher">
-                    <Channel Id="%AID%_CH-SON%CC%" Name="f%CC%SON" Number="%PEFIX%" Text="Sonsos %CC%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201">
+                    <Channel Id="%AID%_CH-SON%CC%" Name="f%CC%SON" Number="%PREFIX%" Text="Sonsos %CC%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201">
                       <ParameterBlock Id="%AID%_PB-%TT%%CC%01" Name="SON%C%Wrapper" Inline="true">
                         <ParameterSeparator Id="%AID%_PS-nnn" Text="Sonos Konfiguration" UIHint="Headline" />
                           <!-- Parameter Sonos Channel Usage -->

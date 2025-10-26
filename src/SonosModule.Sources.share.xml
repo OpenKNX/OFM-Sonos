@@ -44,7 +44,7 @@
             </ParameterRefs>
           </Static>
           <Dynamic>
-            <Channel Name="MainChannel" Text="Sonos Tonquellen" Number="%TT%" Id="%AID%_CH-%TT%" Icon="waveform">
+            <Channel Name="MainChannel" Text="Sonos Tonquellen" Number="%PREFIX%" Id="%AID%_CH-%TT%" Icon="waveform">
 
               <ParameterBlock Id="%AID%_PB-nnn" Name="SonosSettings" Text="Allgemein" Icon="cog-outline" HelpContext="SON-SonosTonquellen">
 

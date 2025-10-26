@@ -108,7 +108,7 @@
             </Extension>
           </Static>
           <Dynamic>
-            <Channel Name="MainChannel" Text="Sonos Lautsprecher" Number="%TT%" Id="%AID%_CH-%TT%" Icon="speaker">
+            <Channel Name="MainChannel" Text="Sonos Lautsprecher" Number="%PREFIX%" Id="%AID%_CH-%TT%" Icon="speaker">
 
 	            <ParameterBlock Id="%AID%_PB-nnn" Name="SonosSettings" Text="Allgemein" Icon="cog-outline" HelpContext="SON-Allgemein">
 
