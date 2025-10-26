@@ -126,9 +126,9 @@
               <ComObjectRef Id="%AID%_O-%TT%%CC%015_R-%TT%%CC%01501" RefId="%AID%_O-%TT%%CC%015" Text="%C%: Kanal Nr beitreten"                  FunctionText="{{0:-}} Kanal Nr beitreten"                  TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
 
               <!-- Source Selection -->
-              <ComObjectRef Id="%AID%_O-%TT%%CC%016_R-%TT%%CC%01601" RefId="%AID%_O-%TT%%CC%016" Text="%C%: Quelle auswählen"                    FunctionText="{{0:-}} Quelle auswählen"                    TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
+              <ComObjectRef Id="%AID%_O-%TT%%CC%016_R-%TT%%CC%01601" RefId="%AID%_O-%TT%%CC%016" Text="%C%: Tonquellen Nr aktivieren"            FunctionText="{{0:-}} Quelle auswählen"                    TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
               <!-- Source Selection State -->
-              <ComObjectRef Id="%AID%_O-%TT%%CC%017_R-%TT%%CC%01701" RefId="%AID%_O-%TT%%CC%017" Text="%C%: Quelle Auswahl Status"               FunctionText="{{0:-}} Quelle Auswahl Status"               TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
+              <ComObjectRef Id="%AID%_O-%TT%%CC%017_R-%TT%%CC%01701" RefId="%AID%_O-%TT%%CC%017" Text="%C%: Tonquellen Nr Status"                FunctionText="{{0:-}} Quelle Auswahl Status"               TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
 
               <!-- Notification 1 -->
               <ComObjectRef Id="%AID%_O-%TT%%CC%018_R-%TT%%CC%01801" RefId="%AID%_O-%TT%%CC%018" Text="%C%: Benachrichtung 1 starten"            FunctionText="{{0:-}} Benachrichtung 1 starten"            TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
@@ -148,7 +148,7 @@
                 <when test="&gt;=%C%">
               
                   <ParameterBlock Id="%AID%_PB-%C%1" Name="Sonos%C%Page" Text="Sonos %C%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" Icon="speaker" HelpContext="SON-Sonos-Lautsprecher">
-                    <Channel Id="%AID%_CH-SON%CC%" Name="f%CC%SON" Number="SON%CC%" Text="Sonsos %CC%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201">
+                    <Channel Id="%AID%_CH-SON%CC%" Name="f%CC%SON" Number="%PEFIX%" Text="Sonsos %CC%: {{0: ...}}" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201">
                       <ParameterBlock Id="%AID%_PB-%TT%%CC%01" Name="SON%C%Wrapper" Inline="true">
                         <ParameterSeparator Id="%AID%_PS-nnn" Text="Sonos Konfiguration" UIHint="Headline" />
                           <!-- Parameter Sonos Channel Usage -->
