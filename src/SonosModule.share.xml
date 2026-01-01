@@ -11,6 +11,9 @@
               <ParameterType Id="%AID%_PT-SONNumChannels" Name="SONNumChannels">
 								<TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="%N%" />
 							</ParameterType>
+              <ParameterType Id="%AID%_PT-SONNumChannelsWithout0" Name="SONNumChannelsWithout0">
+								<TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="%N%" />
+							</ParameterType>
               <ParameterType Id="%AID%_PT-SONSonosChannelUsage" Name="SonosChannelUsage">
                 <TypeRestriction Base="Value" SizeInBit="7">
                   <Enumeration Text="Inaktiv"                          Value="0" Id="%ENID%" />
