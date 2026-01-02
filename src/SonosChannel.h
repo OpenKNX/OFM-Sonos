@@ -34,5 +34,7 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         const IPAddress speakerIP();
         const std::string name() override;
         const std::string logPrefix() override;
-        bool processCommand(const std::string cmd, bool diagnoseKo);        
+        bool processCommand(const std::string cmd, bool diagnoseKo);     
+        void play(bool play=true);
+        void pause();   
 };

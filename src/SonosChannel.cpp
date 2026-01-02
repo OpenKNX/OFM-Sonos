@@ -293,16 +293,7 @@ void SonosChannel::processInputKo(GroupObject& ko)
         }
         case SON_KoCHPlay:
         {
-            boolean play = ko.value(DPT_Switch);
-            logDebugP("Set play %d", play);
-            auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
-            if (groupCoordinator == nullptr)
-                return;
-            if (play)
-                groupCoordinator->play();
-            else
-                groupCoordinator->pause();
-            break;
+            play(ko.value(DPT_Switch));
         }
         case SON_KoCHPreviousNext:
         {
@@ -445,6 +436,22 @@ void SonosChannel::processInputKo(GroupObject& ko)
             break;
         }
     }
+}
+
+void SonosChannel::play(bool play)
+{
+    auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator == nullptr)
+        return;
+    if (play)
+        groupCoordinator->play();
+    else
+        groupCoordinator->pause();
+}
+
+void SonosChannel::pause()
+{
+    play(false); 
 }
 
 void SonosChannel::joinChannel(uint8_t channelNumber)

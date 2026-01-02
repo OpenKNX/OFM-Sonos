@@ -8,6 +8,7 @@
 #ifndef OPENKNX_DUALCORE
 #error Sonos Module requires OPENKNX_DUALCORE
 #endif
+class SonosChannel;
 
 class SonosModule : public SonosChannelOwnerModule
 {
@@ -15,7 +16,6 @@ class SonosModule : public SonosChannelOwnerModule
     bool _channelSetupCalled = false;
     volatile bool _channelSetup1Called = false;
   public:
-    SonosModule();
 
     void setup() override;
     void setup1() override;
@@ -32,6 +32,8 @@ class SonosModule : public SonosChannelOwnerModule
     void loop1() override;
     void showHelp() override;
     bool processCommand(const std::string cmd, bool diagnoseKo) override;
+    SonosChannel* getChannel(uint8_t channelIndex);
+
   protected:
     OpenKNX::Channel* createChannel(uint8_t _channelIndex /* this parameter is used in macros, do not rename */) override; 
 };

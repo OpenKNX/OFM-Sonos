@@ -4,22 +4,16 @@
 class SonosChannelOwnerModule : public OpenKNX::Module
 {
 private: 
-    uint8_t _numberOfChannels;
+    uint8_t _numberOfChannels = 0;
     uint8_t _currentChannel = 0;
     OpenKNX::Channel** _pChannels = nullptr;
 public:
-    SonosChannelOwnerModule(uint8_t numberOfChannels = 0);
     ~SonosChannelOwnerModule();
 
+    void initialize(uint8_t numberOfChannels);
     virtual OpenKNX::Channel* createChannel(uint8_t _channelIndex /* this parameter is used in macros, do not rename */); 
 
-    /*
-        * Called during startup after initialization of all modules is completed.
-        * Useful for init interrupts on core0
-        */
-    virtual void setup(bool configured) override;
-    virtual void setup() override;
-
+   
     /*
         * Module logic for core0
         */
