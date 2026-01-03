@@ -33,6 +33,7 @@ class SonosModule : public SonosChannelOwnerModule
     void showHelp() override;
     bool processCommand(const std::string cmd, bool diagnoseKo) override;
     SonosChannel* getChannel(uint8_t channelIndex);
+    bool isInitialized();
 
   protected:
     OpenKNX::Channel* createChannel(uint8_t _channelIndex /* this parameter is used in macros, do not rename */) override; 

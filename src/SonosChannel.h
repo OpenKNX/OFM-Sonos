@@ -35,6 +35,14 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         const std::string name() override;
         const std::string logPrefix() override;
         bool processCommand(const std::string cmd, bool diagnoseKo);     
-        void play(bool play=true);
+        bool start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix);
+        void joinToGroupCoordinator(SonosChannel* coordinatorChannel);
+        void play(bool play);
         void pause();   
+        void shuffle(bool shuffle);
+        void setVolumeRelative(int8_t relativeVolume);
+        void setGroupVolumeRelative(int8_t relativeVolume);
+        void togglePause();
+        void nextTrack();
+        void previousTrack();
 };

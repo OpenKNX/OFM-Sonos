@@ -157,6 +157,11 @@ bool SonosModule::restorePower()
     return true;
 }
 
+bool SonosModule::isInitialized()
+{
+    return _channelSetupCalled && _channelSetup1Called;
+}
+
 void SonosModule::loop()
 {
     _sonosApi.setLANNetworkConnected(openknxNetwork.established(), openknxNetwork.localIP());

@@ -454,6 +454,70 @@ void SonosChannel::pause()
     play(false); 
 }
 
+void SonosChannel::shuffle(bool shuffle)
+{
+    auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator == nullptr)
+        return;
+    groupCoordinator->setShuffle(shuffle);
+}
+
+bool SonosChannel::start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix)
+{
+    std::string uriStr = uri;
+    bool isFolderUrl = false;
+    bool isPlaylist = false;
+    if (uriStr.rfind("x-file-cifs:", 0) == 0)
+    {
+        std::string filePath = uriStr.substr(12);
+        if (filePath.rfind("//", 0) == 0)
+        {
+            // relative path
+            if (filePath.rfind("/", 0) == std::string::npos)
+                filePath = "/" + filePath;
+            filePath = std::string(fileUrlPrefix) + (fileUrlPrefix[0] == '/' ? fileUrlPrefix + 1 : fileUrlPrefix);
+        }
+        if (filePath.length() > 0 && filePath.back() == '/')
+        {
+            // end with / -> directory found
+            isFolderUrl = true;
+            _sonosSpeaker->playMusicLibraryDirectory(filePath.c_str());          
+        }
+        else
+        {
+            _sonosSpeaker->playMusicLibraryFile(filePath.c_str());
+        }
+        return true;
+    }
+    else if (uriStr.rfind("x-playlist:", 0) == 0)
+    {
+        isPlaylist = true;
+        _sonosSpeaker->playSonosPlaylist(uriStr.c_str() + 11);
+        return true;
+    }
+    else if (uriStr.rfind("x-rincon-mp3radio://", 0) == 0)
+    {
+          if (strlen(title) == 0 || title[0] == '\0')
+            title = "Radio";
+        _sonosSpeaker->playInternetRadio(uriStr.c_str() + 20, title, imageUrl);
+        return true;
+    }
+    
+    return false;
+    
+}
+
+void SonosChannel::joinToGroupCoordinator(SonosChannel* coordinatorChannel)
+{
+    if (coordinatorChannel == nullptr)
+        return;
+    auto groupCoordinator = coordinatorChannel->_sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator != nullptr)
+    {
+        _sonosSpeaker->joinToGroupCoordinator(groupCoordinator);
+    }
+}
+
 void SonosChannel::joinChannel(uint8_t channelNumber)
 {
     if (channelNumber > 0 && channelNumber <= _sonosModule.getNumberOfChannels())
@@ -792,4 +856,54 @@ bool SonosChannel::delegateCoordination(bool rejoinGroup)
         }
     }
     return false;
+}
+
+
+void SonosChannel::setVolumeRelative(int8_t relativeVolume)
+{
+    if (_sonosSpeaker == nullptr)
+        return;
+    _sonosSpeaker->setVolumeRelative(relativeVolume);
+}
+
+void SonosChannel::setGroupVolumeRelative(int8_t relativeVolume)
+{
+    if (_sonosSpeaker == nullptr)
+        return;
+    auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator != nullptr)
+        groupCoordinator->setGroupVolumeRelative(relativeVolume);
+}
+
+void SonosChannel::togglePause()
+{
+    if (_sonosSpeaker == nullptr)
+        return;
+    auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator != nullptr)
+    {
+        auto playState = groupCoordinator->getPlayState();
+        if (playState == SonosApiPlayState::Playing)
+            groupCoordinator->pause();
+        else
+            groupCoordinator->play();
+    }
+}
+
+void SonosChannel::nextTrack()
+{
+    if (_sonosSpeaker == nullptr)
+        return;
+    auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator != nullptr)
+        groupCoordinator->next();
+}
+
+void SonosChannel::previousTrack()
+{
+    if (_sonosSpeaker == nullptr)
+        return;
+    auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator != nullptr)
+        groupCoordinator->previous();
 }
