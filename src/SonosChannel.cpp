@@ -1,6 +1,18 @@
 #include "SonosChannel.h"
 #include "SonosModule.h"
 
+void replaceAll(std::string& str,
+                const std::string& from,
+                const std::string& to)
+{
+    if (from.empty()) return; 
+
+    size_t pos = 0;
+    while ((pos = str.find(from, pos)) != std::string::npos) {
+        str.replace(pos, from.length(), to);
+        pos += to.length(); // wichtig!
+    }
+}
 
 SonosChannel::SonosChannel(SonosModule& sonosModule, uint8_t _channelIndex /* this parameter is used in macros, do not rename */, SonosApi& sonosApi)
     : _sonosModule(sonosModule), _name()
@@ -549,20 +561,23 @@ void SonosChannel::shuffle(bool shuffle)
 }
 
 
+
 std::shared_ptr<SonosChannedPlayHandle> SonosChannel::start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix, bool startPlaying)
 {
-    std::string uriStr = uri;
-    if (uriStr.rfind("x-file-cifs:", 0) == 0)
+    String uriStr = uri;
+    uriStr.replace(" ", "%20");
+ 
+    if (uriStr.startsWith("x-file-cifs:"))
     {
-        std::string filePath = uriStr.substr(12);
-        if (filePath.rfind("//", 0) == 0)
+        String filePath = uriStr.c_str() + 12;
+        if (!filePath.startsWith("//"))
         {
-            // relative path
-            if (filePath.rfind("/", 0) == std::string::npos)
+            // relative path -> make absolute
+            if (!filePath.startsWith("/"))
                 filePath = "/" + filePath;
-            filePath = std::string(fileUrlPrefix) + (fileUrlPrefix[0] == '/' ? fileUrlPrefix + 1 : fileUrlPrefix);
+            filePath = String(fileUrlPrefix) + (fileUrlPrefix[0] == '/' ? fileUrlPrefix + 1 : fileUrlPrefix);
         }
-        if (filePath.length() > 0 && filePath.back() == '/')
+        if (filePath.endsWith("/"))
         {
             // end with / -> directory found
             if (startPlaying)
@@ -576,13 +591,13 @@ std::shared_ptr<SonosChannedPlayHandle> SonosChannel::start(const char* uri, con
             return std::make_shared<SonosChannedPlayHandle>(uriStr, false, false, _stopCounter);
         }
     }
-    else if (uriStr.rfind("x-playlist:", 0) == 0)
+    else if (uriStr.startsWith("x-playlist:"))
     {
         if (startPlaying)
             _sonosSpeaker->playSonosPlaylist(uriStr.c_str() + 11);
         return std::make_shared<SonosChannedPlayHandle>(uriStr, true, false, _stopCounter);
     }
-    else if (uriStr.rfind("x-rincon-mp3radio://", 0) == 0)
+    else if (uriStr.startsWith("x-rincon-mp3radio://"))
     {
           if (strlen(title) == 0 || title[0] == '\0')
             title = "Radio";

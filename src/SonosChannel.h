@@ -11,14 +11,14 @@ class SonosChannedPlayHandle
 friend class SonosChannel;
     private:
         unsigned long _startTime = millis();
-        std::string _uri;
+        String _uri;
         bool _isPlaylist;
         bool _isFolder;
         unsigned long _stopCounnter;
         unsigned int _playAndTrackChangeCounter = 0;
         bool _playing = true;
     public:
-    SonosChannedPlayHandle(std::string uri, bool isPlaylist, bool isFolder, unsigned long stopCounter)
+    SonosChannedPlayHandle(String& uri, bool isPlaylist, bool isFolder, unsigned long stopCounter)
         : _uri(uri), _isPlaylist(isPlaylist), _isFolder(isFolder), _stopCounnter(stopCounter)
     {
     }
