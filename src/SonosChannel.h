@@ -2,8 +2,27 @@
 #include "OpenKNX.h"
 #include "SonosApi.h"
 #include "WiFi.h"
+#include <memory>
 
 class SonosModule;
+
+class SonosChannedPlayHandle
+{
+friend class SonosChannel;
+    private:
+        unsigned long _startTime = millis();
+        std::string _uri;
+        bool _isPlaylist;
+        bool _isFolder;
+        unsigned long _stopCounnter;
+        unsigned int _playAndTrackChangeCounter = 0;
+        bool _playing = true;
+    public:
+    SonosChannedPlayHandle(std::string uri, bool isPlaylist, bool isFolder, unsigned long stopCounter)
+        : _uri(uri), _isPlaylist(isPlaylist), _isFolder(isFolder), _stopCounnter(stopCounter)
+    {
+    }
+};
 
 class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHandler
 {
@@ -13,6 +32,10 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         String _name;
         bool _singleControl;
         bool _groupControl;
+        SonosTrackInfo _lastTrackInfo;
+        SonosApiPlayState _lastPlayState;
+        unsigned long _stopCounter = 0;
+        unsigned int _playAndTrackChangeCounter = 1;
         void notificationVolumeChanged(SonosSpeaker* speaker, uint8_t volume) override;
         void notificationMuteChanged(SonosSpeaker* speaker, boolean mute) override;
         void notificationGroupVolumeChanged(SonosSpeaker* speaker, uint8_t volume) override;
@@ -35,7 +58,7 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         const std::string name() override;
         const std::string logPrefix() override;
         bool processCommand(const std::string cmd, bool diagnoseKo);     
-        bool start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix);
+        std::shared_ptr<SonosChannedPlayHandle> start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix, bool startPlaying);
         void joinToGroupCoordinator(SonosChannel* coordinatorChannel);
         void play(bool play);
         void pause();   
@@ -45,4 +68,6 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         void togglePause();
         void nextTrack();
         void previousTrack();
+        bool isPlaying(std::shared_ptr<SonosChannedPlayHandle> playHandler);
+       
 };

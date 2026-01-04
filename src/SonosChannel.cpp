@@ -97,6 +97,13 @@ void SonosChannel::notificationGroupMuteChanged(SonosSpeaker* speaker, boolean m
 
 void SonosChannel::notificationPlayStateChanged(SonosSpeaker* speaker, SonosApiPlayState playState)
 {
+    logErrorP("DEBUG:Play state changed to %d", playState);
+    if (playState != _lastPlayState && playState == SonosApiPlayState::Stopped)
+    {
+        _stopCounter++;
+    }
+    _lastPlayState = playState;
+    _playAndTrackChangeCounter = max((unsigned int) 1, _playAndTrackChangeCounter + 1);
     if (_sonosSpeaker->findGroupCoordinator() == _sonosSpeaker)
     {
         // this channel is group coordinator
@@ -142,8 +149,87 @@ void SonosChannel::notificationGroupCoordinatorChanged(SonosSpeaker* speaker)
         KoSON_CHGroupMuteState.value(groupMute, DPT_Switch);
 }
 
+
+bool SonosChannel::isPlaying(std::shared_ptr<SonosChannedPlayHandle> playHandler)
+{
+    if (playHandler == nullptr)
+        return false;
+    SonosChannedPlayHandle& handle = *playHandler;
+    if (handle._startTime != 0)
+    {
+        if (handle._startTime + 5000 > millis())
+        {
+            logDebugP("Start wait time finished");
+            handle._startTime = 0;
+        }
+        else
+        {
+             return handle._playing;
+        }
+    }
+    auto currentPlayAndTrackChangeCounter = _playAndTrackChangeCounter;
+    if (playHandler->_playAndTrackChangeCounter != currentPlayAndTrackChangeCounter)
+    {
+        // Update state
+        bool playing = true;
+        logErrorP("DEBUG: Play and track change counter changed from %u to %u", handle._playAndTrackChangeCounter, currentPlayAndTrackChangeCounter);
+        handle._playAndTrackChangeCounter = currentPlayAndTrackChangeCounter;
+        if (_lastPlayState != SonosApiPlayState::Playing && _lastPlayState != SonosApiPlayState::Transitioning)
+        {
+            logDebugP("Not playing, last play state %d", (int) _lastPlayState);
+            playing = false;
+        }
+        if (playHandler->_isPlaylist)
+        {
+            bool stopCounterChanged = _stopCounter != playHandler->_stopCounnter;
+            if (stopCounterChanged)
+            {
+                logDebugP("Stop counter changed from %lu to %lu", playHandler->_stopCounnter, _stopCounter);
+                playing = false;
+            }
+            else
+            {
+                playing = handle._playing;
+                if (!playing)
+                    logDebugP("Playlist already stopped");
+            }
+        }
+        else
+        {
+        
+            String uri = _lastTrackInfo.uri;
+            uri.replace("https:", "http:");
+            String uriHandle = playHandler->_uri.c_str();
+            uriHandle.replace("https:", "http:");
+            logDebugP("Checking playing state for URI: %s", uri.c_str());
+            if (playHandler->_isFolder)
+            {
+                if (!uri.startsWith(uriHandle))
+                {
+                    logDebugP("URL '%s' does not start with handle URL '%s'", uri.c_str(), uriHandle.c_str());
+                    playing = false;
+                }
+            }
+            else if (uri != uriHandle)
+            {
+                logDebugP("URL '%s' does not match handle URL '%s'", uri.c_str(), uriHandle.c_str());
+                playing = false;
+            }
+        }
+        if (playing)
+            logDebugP("Is playing");
+        handle._playing = playing;
+    }
+    return handle._playing;
+   
+}
+
 void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInfo& trackInfo)
 {
+    _lastTrackInfo = trackInfo;
+    _playAndTrackChangeCounter = max((unsigned int) 1, _playAndTrackChangeCounter + 1);
+    logErrorP("DEBUG: %lu Track changed to %s", _playAndTrackChangeCounter, trackInfo.uri.c_str());
+  
     uint8_t sourceNumber = 0;
     if (trackInfo.uri.length() != 0)
     {
@@ -462,11 +548,10 @@ void SonosChannel::shuffle(bool shuffle)
     groupCoordinator->setShuffle(shuffle);
 }
 
-bool SonosChannel::start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix)
+
+std::shared_ptr<SonosChannedPlayHandle> SonosChannel::start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix, bool startPlaying)
 {
     std::string uriStr = uri;
-    bool isFolderUrl = false;
-    bool isPlaylist = false;
     if (uriStr.rfind("x-file-cifs:", 0) == 0)
     {
         std::string filePath = uriStr.substr(12);
@@ -480,30 +565,32 @@ bool SonosChannel::start(const char* uri, const char* title, const char* imageUr
         if (filePath.length() > 0 && filePath.back() == '/')
         {
             // end with / -> directory found
-            isFolderUrl = true;
-            _sonosSpeaker->playMusicLibraryDirectory(filePath.c_str());          
+            if (startPlaying)
+                _sonosSpeaker->playMusicLibraryDirectory(filePath.c_str());          
+            return std::make_shared<SonosChannedPlayHandle>(uriStr, false, true, _stopCounter);
         }
         else
         {
-            _sonosSpeaker->playMusicLibraryFile(filePath.c_str());
+            if (startPlaying)
+                _sonosSpeaker->playMusicLibraryFile(filePath.c_str());
+            return std::make_shared<SonosChannedPlayHandle>(uriStr, false, false, _stopCounter);
         }
-        return true;
     }
     else if (uriStr.rfind("x-playlist:", 0) == 0)
     {
-        isPlaylist = true;
-        _sonosSpeaker->playSonosPlaylist(uriStr.c_str() + 11);
-        return true;
+        if (startPlaying)
+            _sonosSpeaker->playSonosPlaylist(uriStr.c_str() + 11);
+        return std::make_shared<SonosChannedPlayHandle>(uriStr, true, false, _stopCounter);
     }
     else if (uriStr.rfind("x-rincon-mp3radio://", 0) == 0)
     {
           if (strlen(title) == 0 || title[0] == '\0')
             title = "Radio";
-        _sonosSpeaker->playInternetRadio(uriStr.c_str() + 20, title, imageUrl);
-        return true;
+        if (startPlaying)
+            _sonosSpeaker->playInternetRadio(uriStr.c_str() + 20, title, imageUrl);
+        return std::make_shared<SonosChannedPlayHandle>(uriStr, false, false, _stopCounter);;
     }
-    
-    return false;
+    return std::shared_ptr<SonosChannedPlayHandle>();
     
 }
 
