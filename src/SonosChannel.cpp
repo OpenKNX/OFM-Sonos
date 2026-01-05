@@ -109,7 +109,6 @@ void SonosChannel::notificationGroupMuteChanged(SonosSpeaker* speaker, boolean m
 
 void SonosChannel::notificationPlayStateChanged(SonosSpeaker* speaker, SonosApiPlayState playState)
 {
-    logErrorP("DEBUG:Play state changed to %d", playState);
     if (playState != _lastPlayState && playState == SonosApiPlayState::Stopped)
     {
         _stopCounter++;
@@ -162,14 +161,14 @@ void SonosChannel::notificationGroupCoordinatorChanged(SonosSpeaker* speaker)
 }
 
 
-bool SonosChannel::isPlaying(std::shared_ptr<SonosChannedPlayHandle> playHandler)
+bool SonosChannel::isPlaying(SonosChannelPlayHandle* playHandler)
 {
     if (playHandler == nullptr)
         return false;
-    SonosChannedPlayHandle& handle = *playHandler;
+    SonosChannelPlayHandle& handle = *playHandler;
     if (handle._startTime != 0)
     {
-        if (handle._startTime + 5000 > millis())
+        if (millis() - handle._startTime > 5000)
         {
             logDebugP("Start wait time finished");
             handle._startTime = 0;
@@ -184,7 +183,6 @@ bool SonosChannel::isPlaying(std::shared_ptr<SonosChannedPlayHandle> playHandler
     {
         // Update state
         bool playing = true;
-        logErrorP("DEBUG: Play and track change counter changed from %u to %u", handle._playAndTrackChangeCounter, currentPlayAndTrackChangeCounter);
         handle._playAndTrackChangeCounter = currentPlayAndTrackChangeCounter;
         if (_lastPlayState != SonosApiPlayState::Playing && _lastPlayState != SonosApiPlayState::Transitioning)
         {
@@ -240,7 +238,6 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
 {
     _lastTrackInfo = trackInfo;
     _playAndTrackChangeCounter = max((unsigned int) 1, _playAndTrackChangeCounter + 1);
-    logErrorP("DEBUG: %lu Track changed to %s", _playAndTrackChangeCounter, trackInfo.uri.c_str());
   
     uint8_t sourceNumber = 0;
     if (trackInfo.uri.length() != 0)
@@ -560,60 +557,98 @@ void SonosChannel::shuffle(bool shuffle)
     groupCoordinator->setShuffle(shuffle);
 }
 
-
-
-std::shared_ptr<SonosChannedPlayHandle> SonosChannel::start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix, bool startPlaying)
+void SonosChannel::start(const std::shared_ptr<SonosChannelPlayHandle>& playHandler)
 {
-    String uriStr = uri;
-    uriStr.replace(" ", "%20");
- 
+    if (playHandler == nullptr)
+        return;
+    start(playHandler->_uri.c_str(), playHandler->_title.c_str(), playHandler->_imageUrl.c_str(), "", true);
+}
+
+std::shared_ptr<SonosChannelPlayHandle> SonosChannel::start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix, bool startPlaying)
+{
+    static const char hex[] = "0123456789ABCDEF";
+   
+    if (uri == nullptr || uri[0] == '\0')
+        return std::shared_ptr<SonosChannelPlayHandle>();
+    String uriStr;
+    while (char c = *uri++)
+    {
+        if (c >= 0x21 && c <= 0x7e)
+        {
+            uriStr += c;
+        }
+        else
+        {
+            uriStr += '%';
+            uriStr += hex[c >> 4];
+            uriStr += hex[c & 15];
+        }
+    }
+    logDebugP("Start URI '%s'", uriStr.c_str());
     if (uriStr.startsWith("x-file-cifs:"))
     {
         String filePath = uriStr.c_str() + 12;
+        String absolutePath = filePath;
         if (!filePath.startsWith("//"))
         {
-            // relative path -> make absolute
-            if (!filePath.startsWith("/"))
-                filePath = "/" + filePath;
-            filePath = String(fileUrlPrefix) + (fileUrlPrefix[0] == '/' ? fileUrlPrefix + 1 : fileUrlPrefix);
+            // build absolute path, take care of single slash as separator
+            absolutePath = fileUrlPrefix;
+            if (absolutePath.endsWith("/"))
+            {
+                if (filePath.startsWith("/"))
+                    absolutePath = absolutePath + filePath.substring(1);
+                else
+                    absolutePath = absolutePath + filePath;
+            }
+            else
+            {
+                if (filePath.startsWith("/"))
+                    absolutePath = absolutePath + filePath;
+                else
+                    absolutePath = absolutePath + "/" + filePath;
+            }
         }
-        if (filePath.endsWith("/"))
+        if (startPlaying)
+            logDebugP("Playing file path '%s'", absolutePath.c_str());
+        else
+            logDebugP("Use file path '%s'", absolutePath.c_str());
+        if (absolutePath.endsWith("/"))
         {
             // end with / -> directory found
             if (startPlaying)
-                _sonosSpeaker->playMusicLibraryDirectory(filePath.c_str());          
-            return std::make_shared<SonosChannedPlayHandle>(uriStr, false, true, _stopCounter);
+                _sonosSpeaker->playMusicLibraryDirectory(absolutePath.c_str());          
+            return std::make_shared<SonosChannelPlayHandle>(*this, "x-file-cifs:" + absolutePath, title, imageUrl, false, true, _stopCounter);
         }
         else
         {
             if (startPlaying)
-                _sonosSpeaker->playMusicLibraryFile(filePath.c_str());
-            return std::make_shared<SonosChannedPlayHandle>(uriStr, false, false, _stopCounter);
+                _sonosSpeaker->playMusicLibraryFile(absolutePath.c_str());
+            return std::make_shared<SonosChannelPlayHandle>(*this, "x-file-cifs:" + absolutePath, title, imageUrl, false, false, _stopCounter);
         }
     }
     else if (uriStr.startsWith("x-playlist:"))
     {
         if (startPlaying)
             _sonosSpeaker->playSonosPlaylist(uriStr.c_str() + 11);
-        return std::make_shared<SonosChannedPlayHandle>(uriStr, true, false, _stopCounter);
+        return std::make_shared<SonosChannelPlayHandle>(*this, uriStr, title, imageUrl, true, false, _stopCounter);
     }
     else if (uriStr.startsWith("x-rincon-mp3radio://"))
     {
-          if (strlen(title) == 0 || title[0] == '\0')
+        if (title == nullptr || strlen(title) == 0 || title[0] == '\0')
             title = "Radio";
         if (startPlaying)
             _sonosSpeaker->playInternetRadio(uriStr.c_str() + 20, title, imageUrl);
-        return std::make_shared<SonosChannedPlayHandle>(uriStr, false, false, _stopCounter);;
+        return std::make_shared<SonosChannelPlayHandle>(*this, uriStr, title, imageUrl, false, false, _stopCounter);;
     }
-    return std::shared_ptr<SonosChannedPlayHandle>();
+    return std::shared_ptr<SonosChannelPlayHandle>();
     
 }
 
-void SonosChannel::joinToGroupCoordinator(SonosChannel* coordinatorChannel)
+void SonosChannel::joinToGroupCoordinatorOf(SonosChannel* channel)
 {
-    if (coordinatorChannel == nullptr)
+    if (channel == nullptr)
         return;
-    auto groupCoordinator = coordinatorChannel->_sonosSpeaker->findGroupCoordinator();
+    auto groupCoordinator = channel->_sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)
     {
         _sonosSpeaker->joinToGroupCoordinator(groupCoordinator);
@@ -643,6 +678,11 @@ void SonosChannel::joinChannel(uint8_t channelNumber)
         if (!delegateCoordination(false))
             _sonosSpeaker->unjoin();
     }
+}
+
+void SonosChannel::unjoin()
+{
+    joinChannel(0);
 }
 
 bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
@@ -968,6 +1008,13 @@ void SonosChannel::setVolumeRelative(int8_t relativeVolume)
     _sonosSpeaker->setVolumeRelative(relativeVolume);
 }
 
+void SonosChannel::setVolume(uint8_t volume)
+{
+    if (_sonosSpeaker == nullptr)
+        return;
+    _sonosSpeaker->setVolume(volume);
+}
+
 void SonosChannel::setGroupVolumeRelative(int8_t relativeVolume)
 {
     if (_sonosSpeaker == nullptr)
@@ -975,6 +1022,25 @@ void SonosChannel::setGroupVolumeRelative(int8_t relativeVolume)
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)
         groupCoordinator->setGroupVolumeRelative(relativeVolume);
+}
+
+void SonosChannel::setGroupVolume(uint8_t volume)
+{
+    if (_sonosSpeaker == nullptr)
+        return;
+    auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator != nullptr)
+        groupCoordinator->setGroupVolume(volume);
+}
+
+uint8_t SonosChannel::getGroupVolume()
+{
+    if (_sonosSpeaker == nullptr)
+        return 0;
+    auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator != nullptr)
+        return groupCoordinator->getGroupVolume();
+    return 0;
 }
 
 void SonosChannel::togglePause()
@@ -1008,4 +1074,14 @@ void SonosChannel::previousTrack()
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)
         groupCoordinator->previous();
+}
+
+SonosApiPlayState SonosChannel::getPlayState()
+{
+    if (_sonosSpeaker == nullptr)
+        return SonosApiPlayState::Stopped;
+    auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
+    if (groupCoordinator != nullptr)
+        return groupCoordinator->getPlayState();
+    return SonosApiPlayState::Stopped;
 }

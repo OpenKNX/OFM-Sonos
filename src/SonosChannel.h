@@ -3,26 +3,9 @@
 #include "SonosApi.h"
 #include "WiFi.h"
 #include <memory>
+#include "SonosChannelPlayHandle.h"
 
 class SonosModule;
-
-class SonosChannedPlayHandle
-{
-friend class SonosChannel;
-    private:
-        unsigned long _startTime = millis();
-        String _uri;
-        bool _isPlaylist;
-        bool _isFolder;
-        unsigned long _stopCounnter;
-        unsigned int _playAndTrackChangeCounter = 0;
-        bool _playing = true;
-    public:
-    SonosChannedPlayHandle(String& uri, bool isPlaylist, bool isFolder, unsigned long stopCounter)
-        : _uri(uri), _isPlaylist(isPlaylist), _isFolder(isFolder), _stopCounnter(stopCounter)
-    {
-    }
-};
 
 class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHandler
 {
@@ -58,16 +41,22 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         const std::string name() override;
         const std::string logPrefix() override;
         bool processCommand(const std::string cmd, bool diagnoseKo);     
-        std::shared_ptr<SonosChannedPlayHandle> start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix, bool startPlaying);
-        void joinToGroupCoordinator(SonosChannel* coordinatorChannel);
-        void play(bool play);
+        std::shared_ptr<SonosChannelPlayHandle> start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix, bool startPlaying);
+        void start(const std::shared_ptr<SonosChannelPlayHandle>& playHandler);
+        void joinToGroupCoordinatorOf(SonosChannel* channel);
+        void unjoin();
+        void play(bool play = true);
         void pause();   
         void shuffle(bool shuffle);
         void setVolumeRelative(int8_t relativeVolume);
+        void setVolume(uint8_t volume);
         void setGroupVolumeRelative(int8_t relativeVolume);
+        void setGroupVolume(uint8_t volume);
+        uint8_t getGroupVolume();
         void togglePause();
         void nextTrack();
         void previousTrack();
-        bool isPlaying(std::shared_ptr<SonosChannedPlayHandle> playHandler);
-       
+        SonosApiPlayState getPlayState();
+        bool isPlaying(SonosChannelPlayHandle* playHandler);
+   
 };
