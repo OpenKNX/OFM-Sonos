@@ -161,23 +161,12 @@ void SonosChannel::notificationGroupCoordinatorChanged(SonosSpeaker* speaker)
 }
 
 
-bool SonosChannel::isPlaying(SonosChannelPlayHandle* playHandler)
+TagPlayState SonosChannel::isPlaying(SonosChannelPlayHandle* playHandler)
 {
     if (playHandler == nullptr)
-        return false;
+        return TagPlayState::Stopped;
+    
     SonosChannelPlayHandle& handle = *playHandler;
-    if (handle._startTime != 0)
-    {
-        if (millis() - handle._startTime > 5000)
-        {
-            logDebugP("Start wait time finished");
-            handle._startTime = 0;
-        }
-        else
-        {
-             return handle._playing;
-        }
-    }
     auto currentPlayAndTrackChangeCounter = _playAndTrackChangeCounter;
     if (playHandler->_playAndTrackChangeCounter != currentPlayAndTrackChangeCounter)
     {
@@ -208,15 +197,17 @@ bool SonosChannel::isPlaying(SonosChannelPlayHandle* playHandler)
         {
         
             String uri = _lastTrackInfo.uri;
-            uri.replace("https:", "http:");
             String uriHandle = playHandler->_uri.c_str();
+            uri.replace("https:", "http:");
             uriHandle.replace("https:", "http:");
+            if (uriHandle.startsWith("x-rincon-mp3radio://"))
+                 uri.replace("aac://", "x-rincon-mp3radio://");
             logDebugP("Checking playing state for URI: %s", uri.c_str());
             if (playHandler->_isFolder)
             {
                 if (!uri.startsWith(uriHandle))
                 {
-                    logDebugP("URL '%s' does not start with handle URL '%s'", uri.c_str(), uriHandle.c_str());
+                    logDebugP("URL '%s' does not start with handle URL '%s'", playHandler->_uri.c_str(), uriHandle.c_str());
                     playing = false;
                 }
             }
@@ -227,10 +218,25 @@ bool SonosChannel::isPlaying(SonosChannelPlayHandle* playHandler)
             }
         }
         if (playing)
+        {
             logDebugP("Is playing");
+            handle._startTime = 0; // reset start time
+        }
         handle._playing = playing;
     }
-    return handle._playing;
+    if (handle._startTime != 0)
+    {
+        if (millis() - handle._startTime > 5000)
+        {
+            logDebugP("Start wait time finished");
+            handle._startTime = 0;
+        }
+        else
+        {
+             return TagPlayState::WaitForResponse;
+        }
+    }
+    return handle._playing ? TagPlayState::Playing : TagPlayState::Stopped;
    
 }
 
@@ -1084,4 +1090,9 @@ SonosApiPlayState SonosChannel::getPlayState()
     if (groupCoordinator != nullptr)
         return groupCoordinator->getPlayState();
     return SonosApiPlayState::Stopped;
+}
+
+uint8_t SonosChannel::getChannelIndex()
+{
+   return _channelIndex;
 }

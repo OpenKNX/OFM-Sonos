@@ -4,7 +4,6 @@
 #include "WiFi.h"
 #include <memory>
 #include "SonosChannelPlayHandle.h"
-
 class SonosModule;
 
 class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHandler
@@ -57,6 +56,7 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         void nextTrack();
         void previousTrack();
         SonosApiPlayState getPlayState();
-        bool isPlaying(SonosChannelPlayHandle* playHandler);
+        TagPlayState isPlaying(SonosChannelPlayHandle* playHandler);
+        uint8_t getChannelIndex();
    
 };

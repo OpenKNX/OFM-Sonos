@@ -5,7 +5,7 @@ SonosChannelPlayHandle::SonosChannelPlayHandle(SonosChannel &channel, String &ur
     : _channel(channel), _uri(uri), _title(title), _imageUrl(imageUrl), _isPlaylist(isPlaylist), _isFolder(isFolder), _stopCounnter(stopCounter)
 {
 }
-bool SonosChannelPlayHandle::isPlaying()
+TagPlayState SonosChannelPlayHandle::isPlaying()
 {
     return _channel.isPlaying(this);
 }
