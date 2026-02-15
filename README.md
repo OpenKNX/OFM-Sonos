@@ -2,6 +2,10 @@
 
 This module provides function to control of Sonsos speaker via the unoffical local API.
 
+## Release Notes
+
+- 0.3 Fix: Memory layout
+
 ## Platforms
 
 * ARDUINO_ARCH_ESP32

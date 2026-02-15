@@ -56,22 +56,22 @@
                 <Parameter Id="%AID%_UP-%TT%10011" Name="NotificationVolume1" ParameterType="%AID%_PT-SONNotificationVolume" Offset="151" BitOffset="0" Text="Lautstärke" Value="25" SuffixText="%" />                
             </Union>  
             <Union SizeInBit="1216">
-                <Memory CodeSegment="%MID%" Offset="152" BitOffset="0" />  
+                <Memory CodeSegment="%MID%" Offset="153" BitOffset="0" />  
                 <Parameter Id="%AID%_UP-%TT%10020" Name="NotificationUrl2" ParameterType="%AID%_PT-SONNotificationUri" Offset="0" BitOffset="0" Text="URL" Value="" />
                 <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->
                 <Parameter Id="%AID%_UP-%TT%10021" Name="NotificationVolume2" ParameterType="%AID%_PT-SONNotificationVolume" Offset="151" BitOffset="0" Text="Lautstärke" Value="25" SuffixText="%" />   
             </Union> 
             <Union SizeInBit="1216">
-                <Memory CodeSegment="%MID%" Offset="304" BitOffset="0" />  
+                <Memory CodeSegment="%MID%" Offset="305" BitOffset="0" />  
                 <Parameter Id="%AID%_UP-%TT%10030" Name="NotificationUrl3" ParameterType="%AID%_PT-SONNotificationUri" Offset="0" BitOffset="0" Text="URL" Value="" />
                 <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->      
-                <Parameter Id="%AID%_UP-%TT%10031" Name="NotificationVolume3" ParameterType="%AID%_PT-SONNotificationVolume" Offset="452" BitOffset="0" Text="Lautstärke" Value="25" SuffixText="%" />                
+                <Parameter Id="%AID%_UP-%TT%10031" Name="NotificationVolume3" ParameterType="%AID%_PT-SONNotificationVolume" Offset="151" BitOffset="0" Text="Lautstärke" Value="25" SuffixText="%" />                
             </Union> 
             <Union SizeInBit="1216">
-                <Memory CodeSegment="%MID%" Offset="465" BitOffset="0" />        
-                <Parameter Id="%AID%_UP-%TT%10040" Name="NotificationUrl4" ParameterType="%AID%_PT-SONNotificationUri" Offset="453" BitOffset="0" Text="URL" Value="" />
+                <Memory CodeSegment="%MID%" Offset="457" BitOffset="0" />        
+                <Parameter Id="%AID%_UP-%TT%10040" Name="NotificationUrl4" ParameterType="%AID%_PT-SONNotificationUri" Offset="0" BitOffset="0" Text="URL" Value="" />
                 <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->      
-                <Parameter Id="%AID%_UP-%TT%10041" Name="NotificationVolume4" ParameterType="%AID%_PT-SONNotificationVolume" Offset="603" BitOffset="0" Text="Lautstärke" Value="25" SuffixText="%" />                
+                <Parameter Id="%AID%_UP-%TT%10041" Name="NotificationVolume4" ParameterType="%AID%_PT-SONNotificationVolume" Offset="151" BitOffset="0" Text="Lautstärke" Value="25" SuffixText="%" />                
             </Union>
 
             </Parameters>
