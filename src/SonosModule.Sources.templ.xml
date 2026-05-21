@@ -7,7 +7,7 @@
         <ApplicationProgram>
           <Static>
             <Parameters>
-              <Union SizeInBit="2576">
+              <Union SizeInBit="2592">
                 <Memory CodeSegment="%MID%" Offset="0" BitOffset="0" />
          
                 <!-- Source Type -->
@@ -21,7 +21,7 @@
                 <Parameter Id="%AID%_UP-%TT%%CC%004" Offset="22" BitOffset="0" Name="CH%C%SourceUri" ParameterType="%AID%_PT-SONSourceUri" Text="URL" Value="" />
                 <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->
                 <!-- Source Uri Image-->
-                <Parameter Id="%AID%_UP-%TT%%CC%005" Offset="171" BitOffset="0" Name="CH%C%SourceUriImage" ParameterType="%AID%_PT-SONSourceUri" Text="Logobild URL" Value="" />
+                <Parameter Id="%AID%_UP-%TT%%CC%005" Offset="173" BitOffset="0" Name="CH%C%SourceUriImage" ParameterType="%AID%_PT-SONSourceUri" Text="Logobild URL" Value="" />
                 <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->
               </Union>
             </Parameters>

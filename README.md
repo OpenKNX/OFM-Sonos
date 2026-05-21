@@ -4,6 +4,9 @@ This module provides function to control of Sonsos speaker via the unoffical loc
 
 ## Release Notes
 
+- 0.4 Fix: Playing feedback does not work if URL contains &amp;amp;
+- 0.4 Feature: Freigabe Gruppenobjekt
+- 0.4 Fix: Memory layout for long URLs
 - 0.3 Fix: Memory layout
 
 ## Platforms

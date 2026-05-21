@@ -83,6 +83,18 @@ Erleichert die KNX Konfiguration da beispielsweise die Objekte und Kanäle den N
 Die IP-Adresse des Sonos-Lautsprechers
 
 <!-- DOC -->
+### Freigabe Gruppenobjekt
+
+Wenn einzelne Sonos zeitweise durch Aktoren vom Stromnetz getrennt werden, muss das Freigabe Gruppenobjekt verwendet werden damit die Sonos Steuerung den betroffen Lautsprecher nicht anfrägt. 
+Ansonsten kommt es zu Fehlern durch lange blockierende Aufrufe in der Steuerung.
+
+Wir diese Option aktiviert, wird das Gruppenobjekt 'Kanal aktivieren' eingeblendet. 
+Diese muss mit der Gruppenadresse die den Sonoslautsprecher über den Aktor einschaltet verbunden werden.
+
+0 bedeutet das der Kanal inaktiv ist
+1 bedeutet das der Kanal aktiv ist
+
+<!-- DOC -->
 ### Kanal deaktivieren (zu Testzwecken)
 
 Der Kanal wird deaktivert, die Konfiguration bleibt jedoch erhalten
@@ -260,4 +272,4 @@ Dieser Parameter ist optional.
 <!-- DOC HelpContext="SonosZufallswiedergabe" -->
 ### Zufallswiedergabe
 
-Stellt die Sonos URI mehrere Title bereit, werden diese bei aktivierter Option in zufälliger Reihenfolge wiedergegeben.
+Stellt die Sonos URI mehrere Titel bereit, werden diese bei aktivierter Option in zufälliger Reihenfolge wiedergegeben.

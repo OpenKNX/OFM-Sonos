@@ -1,6 +1,6 @@
 {
     "name": "OFM-Sonos",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "Sonos Module",
     "homepage": "https://openknx.de",
     "authors": {
@@ -14,6 +14,6 @@
         "url": "https://github.com/OpenKNX/OFM-Sonos"
     },
     "dependencies": {
-         "mgeramb/SonosArduinoLocalUpnpAPI": "https://github.com/mgeramb/SonosArduinoLocalUpnpAPI.git@^0.0.8"
+         "mgeramb/SonosArduinoLocalUpnpAPI": "https://github.com/mgeramb/SonosArduinoLocalUpnpAPI.git@^0.0.10"
       }
 }

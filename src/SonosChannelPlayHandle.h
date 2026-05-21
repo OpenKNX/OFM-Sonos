@@ -15,7 +15,8 @@ class SonosChannelPlayHandle
 {
 friend class SonosChannel;
     private:
-        unsigned long _startTime = millis();
+        unsigned long _startTime = 0;
+        bool _timeout = false;
         String _uri;
         String _title;
         String _imageUrl;
@@ -26,7 +27,10 @@ friend class SonosChannel;
         bool _playing = false;
         SonosChannel& _channel;
     public:
-    SonosChannelPlayHandle(SonosChannel& channel, String& uri, const char* title, const char* imageUrl, bool isPlaylist, bool isFolder, unsigned long stopCounter);
+    SonosChannelPlayHandle(SonosChannel& channel, String& uri, const char* title, const char* imageUrl, bool isPlaylist, bool isFolder, unsigned long stopCounter, bool startPlaying);
     TagPlayState isPlaying();
+    const char* uri() { return _uri.c_str(); }
+    bool isTimedOut() { return _timeout; }
+    SonosChannel& channel() { return _channel; }
 
 };

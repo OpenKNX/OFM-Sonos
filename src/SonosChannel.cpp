@@ -31,10 +31,29 @@ SonosChannel::SonosChannel(SonosModule& sonosModule, uint8_t _channelIndex /* th
     IPAddress speakerIP = IPAddress(arduinoIP);
     _sonosSpeaker = sonosApi.addSpeaker(speakerIP);
     _name = speakerIP.toString();
-#ifndef SONOS_DISABLE_CALLBACK
-    _sonosSpeaker->setCallback(this);
-#endif
 }
+
+void SonosChannel::setup()
+{
+    if (ParamSON_CHChannelEnableKo)
+    {
+        if (KoSON_CHChannelEnabled.initialized())
+        {
+            lockChannel(!KoSON_CHChannelEnabled.value(DPT_Switch));
+        }
+        else
+        {
+            // if KO is not initialized, initialize it with current state
+            lockChannel(true); // lock channel until state is read
+            KoSON_CHChannelEnabled.requestObjectRead();
+        }
+    }
+    else
+    {
+        lockChannel(false);
+    }
+}
+
 
 const IPAddress SonosChannel::speakerIP()
 {
@@ -50,9 +69,26 @@ const std::string SonosChannel::logPrefix()
     return "Sonos.Channel";
 }
 
-void SonosChannel::loop1()
+void SonosChannel::lockChannel(bool lock)
 {
+    if (_locked == lock)
+        return;
+    _locked = lock;
+    if (_locked)
+    {
+        KoSON_CHPlayFeedback.valueCompare(false, DPT_Start);   
+    }
+#ifndef SONOS_DISABLE_CALLBACK
+    _sonosSpeaker->setCallback(_locked ? nullptr : this);
+#endif
+}
 
+void SonosChannel::loop()
+{
+    if (_locked)
+        return;
+    if (_sonosSpeaker != nullptr)
+        _sonosSpeaker->loop();
 }
 
 void SonosChannel::notificationVolumeChanged(SonosSpeaker* speaker, uint8_t volume)
@@ -163,6 +199,8 @@ void SonosChannel::notificationGroupCoordinatorChanged(SonosSpeaker* speaker)
 
 TagPlayState SonosChannel::isPlaying(SonosChannelPlayHandle* playHandler)
 {
+    if (_locked)
+        return TagPlayState::Stopped;
     if (playHandler == nullptr)
         return TagPlayState::Stopped;
     
@@ -199,21 +237,24 @@ TagPlayState SonosChannel::isPlaying(SonosChannelPlayHandle* playHandler)
             String uri = _lastTrackInfo.uri;
             String uriHandle = playHandler->_uri.c_str();
             uri.replace("https:", "http:");
+            uri.replace("&amp;", "%26");
             uriHandle.replace("https:", "http:");
+            uriHandle.replace("&amp;", "%26");
             if (uriHandle.startsWith("x-rincon-mp3radio://"))
                  uri.replace("aac://", "x-rincon-mp3radio://");
-            logDebugP("Checking playing state for URI: %s", uri.c_str());
+            logDebugP("Checking playing state for card URL '%s'", uriHandle.c_str());
             if (playHandler->_isFolder)
             {
                 if (!uri.startsWith(uriHandle))
                 {
-                    logDebugP("URL '%s' does not start with handle URL '%s'", playHandler->_uri.c_str(), uriHandle.c_str());
+                    logInfoP("URL  '%s' does not start with", uriHandle.c_str());
+                    logInfoP("Card '%s'", uri.c_str());
                     playing = false;
                 }
             }
             else if (uri != uriHandle)
             {
-                logDebugP("URL '%s' does not match handle URL '%s'", uri.c_str(), uriHandle.c_str());
+                logInfoP("URL '%s' does not match card URL '%s'", uri.c_str(), uriHandle.c_str());
                 playing = false;
             }
         }
@@ -230,6 +271,7 @@ TagPlayState SonosChannel::isPlaying(SonosChannelPlayHandle* playHandler)
         {
             logDebugP("Start wait time finished");
             handle._startTime = 0;
+            handle._timeout = true;
         }
         else
         {
@@ -342,6 +384,21 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
 void SonosChannel::processInputKo(GroupObject& ko)
 {
     auto index = SON_KoCalcIndex(ko.asap());
+    if (index == SON_KoCHChannelEnabled)
+    {
+        boolean enabled = ko.value(DPT_Switch);
+        logDebugP("Set channel enabled %d", enabled);
+        if (enabled)
+            lockChannel(false);
+        else
+            lockChannel(true);
+        return;
+    }
+    if (_locked)
+    {
+        logDebugP("Channel is locked, ignoring command");
+        return;
+    }
     switch (index)
     {
         case SON_KoCHVolume:
@@ -395,6 +452,7 @@ void SonosChannel::processInputKo(GroupObject& ko)
         case SON_KoCHPlay:
         {
             play(ko.value(DPT_Switch));
+            break;
         }
         case SON_KoCHPreviousNext:
         {
@@ -541,6 +599,8 @@ void SonosChannel::processInputKo(GroupObject& ko)
 
 void SonosChannel::play(bool play)
 {
+    if (_locked)
+        return;
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator == nullptr)
         return;
@@ -552,11 +612,15 @@ void SonosChannel::play(bool play)
 
 void SonosChannel::pause()
 {
+    if (_locked)
+        return;
     play(false); 
 }
 
 void SonosChannel::shuffle(bool shuffle)
 {
+    if (_locked)
+        return;
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator == nullptr)
         return;
@@ -565,6 +629,8 @@ void SonosChannel::shuffle(bool shuffle)
 
 void SonosChannel::start(const std::shared_ptr<SonosChannelPlayHandle>& playHandler)
 {
+    if (_locked)
+        return;
     if (playHandler == nullptr)
         return;
     start(playHandler->_uri.c_str(), playHandler->_title.c_str(), playHandler->_imageUrl.c_str(), "", true);
@@ -572,6 +638,8 @@ void SonosChannel::start(const std::shared_ptr<SonosChannelPlayHandle>& playHand
 
 std::shared_ptr<SonosChannelPlayHandle> SonosChannel::start(const char* uri, const char* title, const char* imageUrl, const char* fileUrlPrefix, bool startPlaying)
 {
+    if (_locked)
+        return std::shared_ptr<SonosChannelPlayHandle>();
     static const char hex[] = "0123456789ABCDEF";
    
     if (uri == nullptr || uri[0] == '\0')
@@ -623,20 +691,20 @@ std::shared_ptr<SonosChannelPlayHandle> SonosChannel::start(const char* uri, con
             // end with / -> directory found
             if (startPlaying)
                 _sonosSpeaker->playMusicLibraryDirectory(absolutePath.c_str());          
-            return std::make_shared<SonosChannelPlayHandle>(*this, "x-file-cifs:" + absolutePath, title, imageUrl, false, true, _stopCounter);
+            return std::make_shared<SonosChannelPlayHandle>(*this, "x-file-cifs:" + absolutePath, title, imageUrl, false, true, _stopCounter, startPlaying);
         }
         else
         {
             if (startPlaying)
                 _sonosSpeaker->playMusicLibraryFile(absolutePath.c_str());
-            return std::make_shared<SonosChannelPlayHandle>(*this, "x-file-cifs:" + absolutePath, title, imageUrl, false, false, _stopCounter);
+            return std::make_shared<SonosChannelPlayHandle>(*this, "x-file-cifs:" + absolutePath, title, imageUrl, false, false, _stopCounter, startPlaying);
         }
     }
     else if (uriStr.startsWith("x-playlist:"))
     {
         if (startPlaying)
             _sonosSpeaker->playSonosPlaylist(uriStr.c_str() + 11);
-        return std::make_shared<SonosChannelPlayHandle>(*this, uriStr, title, imageUrl, true, false, _stopCounter);
+        return std::make_shared<SonosChannelPlayHandle>(*this, uriStr, title, imageUrl, true, false, _stopCounter, startPlaying);
     }
     else if (uriStr.startsWith("x-rincon-mp3radio://"))
     {
@@ -644,7 +712,7 @@ std::shared_ptr<SonosChannelPlayHandle> SonosChannel::start(const char* uri, con
             title = "Radio";
         if (startPlaying)
             _sonosSpeaker->playInternetRadio(uriStr.c_str() + 20, title, imageUrl);
-        return std::make_shared<SonosChannelPlayHandle>(*this, uriStr, title, imageUrl, false, false, _stopCounter);;
+        return std::make_shared<SonosChannelPlayHandle>(*this, uriStr, title, imageUrl, false, false, _stopCounter, startPlaying);
     }
     return std::shared_ptr<SonosChannelPlayHandle>();
     
@@ -652,6 +720,8 @@ std::shared_ptr<SonosChannelPlayHandle> SonosChannel::start(const char* uri, con
 
 void SonosChannel::joinToGroupCoordinatorOf(SonosChannel* channel)
 {
+    if (_locked)
+        return;
     if (channel == nullptr)
         return;
     auto groupCoordinator = channel->_sonosSpeaker->findGroupCoordinator();
@@ -663,6 +733,8 @@ void SonosChannel::joinToGroupCoordinatorOf(SonosChannel* channel)
 
 void SonosChannel::joinChannel(uint8_t channelNumber)
 {
+    if (_locked)
+        return;
     if (channelNumber > 0 && channelNumber <= _sonosModule.getNumberOfChannels())
     {
         auto sonosChannel = (SonosChannel*)_sonosModule.getChannel(channelNumber - 1);
@@ -688,6 +760,8 @@ void SonosChannel::joinChannel(uint8_t channelNumber)
 
 void SonosChannel::unjoin()
 {
+    if (_locked)
+        return;
     joinChannel(0);
 }
 
@@ -697,10 +771,16 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     {
         Serial.println();
         Serial.println(_sonosSpeaker->getUID().c_str());
+        return true;
     }
-    else if (cmd == "track")
+    if (cmd == "track")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         auto trackInfo = _sonosSpeaker->getTrackInfo();
         Serial.println(trackInfo.trackNumber);
         Serial.println(trackInfo.duration);
@@ -711,42 +791,67 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     else if (cmd.rfind("vol ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         int value = atoi(cmd.c_str() + 4);
         if (value < 0 || value > 100)
             Serial.printf("Invalid volume %d\r\n", value);
         else
-            _sonosSpeaker->setVolume(value);
+            setVolume(value);
     }
     else if (cmd.rfind("rvol ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         int value = atoi(cmd.c_str() + 5);
         if (value < -100 || value > 100)
             Serial.printf("Invalid relative volume %d\r\n", value);
         else
-            _sonosSpeaker->setVolumeRelative(value);
+            setVolumeRelative(value);
     }
     else if (cmd.rfind("gvol ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         int value = atoi(cmd.c_str() + 5);
         if (value < 0 || value > 100)
             Serial.printf("Invalid volume %d\r\n", value);
         else
-            _sonosSpeaker->setGroupVolume(value);
+            setGroupVolume(value);
     }
     else if (cmd.rfind("rgvol ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         int value = atoi(cmd.c_str() + 6);
         if (value < -100 || value > 100)
             Serial.printf("Invalid relative volume %d\r\n", value);
         else
-            _sonosSpeaker->setGroupVolumeRelative(value);
+            setGroupVolumeRelative(value);
     }
     else if (cmd.rfind("treb ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         int value = atoi(cmd.c_str() + 5);
         if (value < -10 || value > 10)
             Serial.printf("Invalid treble %d\r\n", value);
@@ -756,11 +861,22 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     else if (cmd == "treb")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }      
+        Serial.println(_sonosSpeaker->getTreble());
         Serial.println(_sonosSpeaker->getTreble());
     }
     else if (cmd.rfind("bass ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         int value = atoi(cmd.c_str() + 5);
         if (value < -10 || value > 10)
             Serial.printf("Invalid bass %d\r\n", value);
@@ -770,95 +886,185 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     else if (cmd == "bass")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         Serial.println(_sonosSpeaker->getBass());
     }
     else if (cmd.rfind("mute ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         bool mute = cmd.substr(5) == "1";
         _sonosSpeaker->setMute(mute);
     }
     else if (cmd.rfind("gmute ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         bool mute = cmd.substr(6) == "1";
         _sonosSpeaker->setGroupMute(mute);
     }
     else if (cmd == "vol")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         Serial.println(_sonosSpeaker->getVolume());
     }
     else if (cmd == "gvol")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         Serial.println(_sonosSpeaker->getGroupVolume());
     }
     else if (cmd.rfind("ldn ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         bool loudness = cmd.substr(4) == "1";
         _sonosSpeaker->setLoudness(loudness);
     }
     else if (cmd == "ldn")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         Serial.println(_sonosSpeaker->getLoudness() ? "1" : "0");
     }
     else if (cmd.rfind("led ", 0) == 0)
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         bool on = cmd.substr(4) == "1";
         _sonosSpeaker->setStatusLight(on);
     }
     else if (cmd == "led")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         Serial.println(_sonosSpeaker->getStatusLight() ? "1" : "0");
     }
     else if (cmd == "mute")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         Serial.println(_sonosSpeaker->getMute() ? "1" : "0");
     }
     else if (cmd == "gmute")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         Serial.println(_sonosSpeaker->getGroupMute() ? "1" : "0");
     }
     else if (cmd == "state")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         Serial.println(_sonosSpeaker->getPlayState());
     }
     else if (cmd == "play")
     {
         Serial.println();
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->play();
     }
     else if (cmd == "pause")
     {
-        Serial.println();
+        Serial.println();        
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->pause();
     }
     else if (cmd == "next")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->next();
     }
     else if (cmd == "prev")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->previous();
     }
     else if (cmd == "stop")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->stop();
     }
     else if (cmd == "findc")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
         if (groupCoordinator != nullptr)
             Serial.println(groupCoordinator->getSpeakerIP().toString());
@@ -868,6 +1074,11 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     else if (cmd == "findnpc")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         auto groupCoordinator = _sonosSpeaker->findNextPlayingGroupCoordinator();
         if (groupCoordinator != nullptr)
             Serial.println(groupCoordinator->getSpeakerIP().toString());
@@ -877,11 +1088,21 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     else if (cmd == "joinnext")
     {
         Serial.println();
+        if (_locked)
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         joinNextPlayingGroup();
     }
     else if (cmd.rfind("dele ", 0) == 0)
     {
         Serial.println();
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         auto targetChannel = atoi(cmd.substr(5).c_str());
         if (targetChannel < 1 || targetChannel > _sonosModule.getNumberOfChannels())
         {
@@ -907,6 +1128,11 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     else if (cmd.rfind("join ", 0) == 0)
     {
         Serial.println();
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         auto targetChannel = atoi(cmd.substr(5).c_str());
         joinChannel(targetChannel);
     }
@@ -914,6 +1140,11 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     else if (cmd.rfind("noti ", 0) == 0)
     {
         Serial.println();
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         auto notificationNr = atoi(cmd.substr(5).c_str());
         playNotification(notificationNr);
     }
@@ -921,6 +1152,11 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     else if (cmd.rfind("src ", 0) == 0)
     {
         Serial.println();
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         auto src = atoi(cmd.substr(4).c_str());
         auto& ko = KoSON_CHSourceNumber;
         ko.valueNoSend((uint8_t) src, DPT_Value_1_Ucount);
@@ -928,27 +1164,57 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
     }
     else if (cmd.rfind("pl ", 0) == 0)
     {
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         auto playList = cmd.substr(2);
         _sonosSpeaker->playSonosPlaylist(playList.c_str());
     }
     else if (cmd == "test1")
     {
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->playInternetRadio("https://orf-live.ors-shoutcast.at/wie-q2a.m3u", "Radio Wien");
     }
     else if (cmd == "test2")
     {
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->playMusicLibraryDirectory("//192.168.0.1/Share/Storage/Musik/Violent Femmes/3");
     }
     else if (cmd == "test3")
     {
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->playMusicLibraryDirectory("//192.168.0.1/Share/Storage/Musik/Whippersnapper/Stories/");
     }
     else if (cmd == "test4")
     {
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->playMusicLibraryFile("//192.168.0.1/Share/Storage/Musik/Violent%20Femmes/3/01%20-%20Violent%20Femmes%20-%20Nightmares.mp3");
     }
     else if (cmd == "test5")
     {
+        if (_locked)        
+        {
+            Serial.println("Channel is locked");
+            return true;
+        }
         _sonosSpeaker->stop();
     }
     else
@@ -958,6 +1224,8 @@ bool SonosChannel::processCommand(const std::string cmd, bool diagnoseKo)
 #if ARDUINO_ARCH_ESP32 
 void SonosChannel::playNotification(byte notificationNumber)
 {
+    if (_locked)
+        return;
     switch (notificationNumber)
     {
         case 1:
@@ -978,6 +1246,8 @@ void SonosChannel::playNotification(byte notificationNumber)
 
 void SonosChannel::joinNextPlayingGroup()
 {
+    if (_locked)
+        return;
     delegateCoordination(true);
 
     auto groupCoordinator = _sonosSpeaker->findNextPlayingGroupCoordinator();
@@ -992,6 +1262,8 @@ void SonosChannel::joinNextPlayingGroup()
 
 bool SonosChannel::delegateCoordination(bool rejoinGroup)
 {
+    if (_locked)
+        return false;
     auto currentGroupCoordinator = _sonosSpeaker->findGroupCoordinator(true);
     if (currentGroupCoordinator == _sonosSpeaker)
     {
@@ -1009,21 +1281,21 @@ bool SonosChannel::delegateCoordination(bool rejoinGroup)
 
 void SonosChannel::setVolumeRelative(int8_t relativeVolume)
 {
-    if (_sonosSpeaker == nullptr)
+    if (_locked)
         return;
     _sonosSpeaker->setVolumeRelative(relativeVolume);
 }
 
 void SonosChannel::setVolume(uint8_t volume)
 {
-    if (_sonosSpeaker == nullptr)
+    if (_locked)
         return;
     _sonosSpeaker->setVolume(volume);
 }
 
 void SonosChannel::setGroupVolumeRelative(int8_t relativeVolume)
 {
-    if (_sonosSpeaker == nullptr)
+    if (_locked)
         return;
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)
@@ -1032,7 +1304,7 @@ void SonosChannel::setGroupVolumeRelative(int8_t relativeVolume)
 
 void SonosChannel::setGroupVolume(uint8_t volume)
 {
-    if (_sonosSpeaker == nullptr)
+    if (_locked)
         return;
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)
@@ -1041,7 +1313,7 @@ void SonosChannel::setGroupVolume(uint8_t volume)
 
 uint8_t SonosChannel::getGroupVolume()
 {
-    if (_sonosSpeaker == nullptr)
+    if (_locked)
         return 0;
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)
@@ -1051,7 +1323,7 @@ uint8_t SonosChannel::getGroupVolume()
 
 void SonosChannel::togglePause()
 {
-    if (_sonosSpeaker == nullptr)
+    if (_locked)
         return;
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)
@@ -1066,7 +1338,7 @@ void SonosChannel::togglePause()
 
 void SonosChannel::nextTrack()
 {
-    if (_sonosSpeaker == nullptr)
+    if (_locked)
         return;
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)
@@ -1075,7 +1347,7 @@ void SonosChannel::nextTrack()
 
 void SonosChannel::previousTrack()
 {
-    if (_sonosSpeaker == nullptr)
+    if (_locked)
         return;
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)
@@ -1084,7 +1356,7 @@ void SonosChannel::previousTrack()
 
 SonosApiPlayState SonosChannel::getPlayState()
 {
-    if (_sonosSpeaker == nullptr)
+    if (_locked)
         return SonosApiPlayState::Stopped;
     auto groupCoordinator = _sonosSpeaker->findGroupCoordinator();
     if (groupCoordinator != nullptr)

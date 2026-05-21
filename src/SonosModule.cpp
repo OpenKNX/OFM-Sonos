@@ -164,10 +164,10 @@ bool SonosModule::isInitialized()
 
 void SonosModule::loop()
 {
-    _sonosApi.setLANNetworkConnected(openknxNetwork.established(), openknxNetwork.localIP());
-    _sonosApi.loop();
-    bool connected = openknxNetwork.established();
-    if (!connected)
+    _networkConnected = openknxNetwork.established();
+    _sonosApi.setLANNetworkConnected(_networkConnected, openknxNetwork.localIP());
+    // Do not call _sonosApi.loop(); the loop will be called for the speaker to handle deactivated channels
+    if (!_networkConnected)
     {
         return;
     }

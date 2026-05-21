@@ -15,6 +15,7 @@ class SonosModule : public SonosChannelOwnerModule
     SonosApi _sonosApi;
     bool _channelSetupCalled = false;
     volatile bool _channelSetup1Called = false;
+    bool _networkConnected = false;
   public:
 
     void setup() override;
