@@ -299,16 +299,14 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
                 {
                     if (trackInfo.uri.startsWith(SonosApi::DefaultSchemaInternetRadio))
                     {
-                        const char* uri = (const char*)ParamSONSRC_CHSourceUri;
-                        if (strcmp(trackInfo.uri.c_str() + strlen(SonosApi::DefaultSchemaInternetRadio), uri) == 0)
+                        if (strcmp(trackInfo.uri.c_str() + strlen(SonosApi::DefaultSchemaInternetRadio), ParamSONSRC_CHSourceUriStr.c_str()) == 0)
                             sourceNumber = _channelIndex + 1;
                     }
                     break;
                 }
                 case 2: // Http
                 {
-                    const char* uri = (const char*)ParamSONSRC_CHSourceUri;
-                    if (strcmp(trackInfo.uri.c_str(), uri) == 0)
+                    if (strcmp(trackInfo.uri.c_str(), ParamSONSRC_CHSourceUriStr.c_str()) == 0)
                         sourceNumber = _channelIndex + 1;
                     break;
                 }
@@ -316,7 +314,7 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
                 {
                     if (trackInfo.uri.startsWith(SonosApi::SchemaMusicLibraryFile))
                     {
-                        String uri = (const char*)ParamSONSRC_CHSourceUri;
+                        String uri = ParamSONSRC_CHSourceUriStr.c_str();
                         if (strcmp(trackInfo.uri.c_str() + strlen(SonosApi::SchemaMusicLibraryFile), uri.c_str()) == 0)
                             sourceNumber = _channelIndex + 1;
                     }
@@ -326,7 +324,7 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
                 {
                     if (trackInfo.uri.startsWith(SonosApi::SchemaMusicLibraryFile))
                     {
-                        String uri = (const char*)ParamSONSRC_CHSourceUri;
+                        String uri = ParamSONSRC_CHSourceUriStr.c_str();
                         uri.replace(" ", "%20");
                         if (!uri.endsWith("/"))
                             uri += "/";
@@ -366,8 +364,7 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
                 }
                 case 8: // Sonos Uri
                 {
-                    const char* uri = (const char*)ParamSONSRC_CHSourceUri;
-                    if (trackInfo.uri == uri)
+                    if (trackInfo.uri == ParamSONSRC_CHSourceUriStr.c_str())
                         sourceNumber = _channelIndex + 1;
                 }
             }
@@ -510,29 +507,23 @@ void SonosChannel::processInputKo(GroupObject& ko)
             {
                 case 1: // Radio
                 {
-                    const char* uri = (const char*)ParamSONSRC_CHSourceUri;
-                    const char* title = (const char*)ParamSONSRC_CHSourceTitle;
-                    const char* imageUrl = (const char*)ParamSONSRC_CHSourceUriImage;
-                    groupCoordinator->playInternetRadio(uri, title, imageUrl);
+                    groupCoordinator->playInternetRadio(ParamSONSRC_CHSourceUriStr.c_str(), ParamSONSRC_CHSourceTitleStr.c_str(), ParamSONSRC_CHSourceUriImageStr.c_str());
                     break;
                 }
                 case 2: // Http
                 {
-                    const char* uri = (const char*)ParamSONSRC_CHSourceUri;
-                    groupCoordinator->playFromHttp(uri);
+                    groupCoordinator->playFromHttp(ParamSONSRC_CHSourceUriStr.c_str());
                     break;
                 }
                 case 3: // Music libary file
                 {
-                    const char* uri = (const char*)ParamSONSRC_CHSourceUri;
-                    groupCoordinator->playMusicLibraryFile(uri);
+                    groupCoordinator->playMusicLibraryFile(ParamSONSRC_CHSourceUriStr.c_str());
                     break;
                 }
                 case 4: // Music libary dir
                 {
-                    const char* uri = (const char*)ParamSONSRC_CHSourceUri;
                     groupCoordinator->setShuffle(ParamSONSRC_CHRandom);
-                    groupCoordinator->playMusicLibraryDirectory(uri);
+                    groupCoordinator->playMusicLibraryDirectory(ParamSONSRC_CHSourceUriStr.c_str());
                     break;
                 }
                 case 5: // Line In
@@ -555,22 +546,18 @@ void SonosChannel::processInputKo(GroupObject& ko)
                 }
                 case 7: // Sonos playlist
                 {
-                    const char* uri = (const char*)ParamSONSRC_CHSourceUri;
                     groupCoordinator->setShuffle(ParamSONSRC_CHRandom);
-                    groupCoordinator->playSonosPlaylist(uri);
+                    groupCoordinator->playSonosPlaylist(ParamSONSRC_CHSourceUriStr.c_str());
                     break;
                 }
                 case 8: // Sonos Uri
                 {
-                    const char* uri = (const char*)ParamSONSRC_CHSourceUri;
-                    const char* title = (const char*)ParamSONSRC_CHSourceTitle;
-                    const char* imageUrl = (const char*)ParamSONSRC_CHSourceUriImage;
-                    if (strlen(title) > 0 || strlen(imageUrl) > 0)
-                        groupCoordinator->playInternetRadio(uri, title, imageUrl, "");
+                    if (!ParamSONSRC_CHSourceTitleStr.empty() || !ParamSONSRC_CHSourceUriImageStr.empty())
+                        groupCoordinator->playInternetRadio(ParamSONSRC_CHSourceUriStr.c_str(), ParamSONSRC_CHSourceTitleStr.c_str(), ParamSONSRC_CHSourceUriImageStr.c_str(), "");
                     else
                     {
                         groupCoordinator->setShuffle(ParamSONSRC_CHRandom);
-                        groupCoordinator->setAVTransportURI(nullptr, uri);     
+                        groupCoordinator->setAVTransportURI(nullptr, ParamSONSRC_CHSourceUriStr.c_str());     
                         groupCoordinator->play();
                     }
                     break;
@@ -578,20 +565,26 @@ void SonosChannel::processInputKo(GroupObject& ko)
             }
             break;
         }
-        case SON_KoCHNotificationSound1:
-        case SON_KoCHNotificationSound2:
-        case SON_KoCHNotificationSound3:
-        case SON_KoCHNotificationSound4:
+        case SON_KoCHNotificationStart:
         {
             boolean trigger = ko.value(DPT_Trigger);
             if (trigger)
             {
-                byte notification = index - SON_KoCHNotificationSound1 + 1;
-                logDebugP("play notification %d", notification);      
+                byte notificationNumber = ParamSON_CHStandardNotification;
+                logDebugP("play notification %d", notificationNumber);      
 #if ARDUINO_ARCH_ESP32    
-                playNotification(notification);
+                playNotification(notificationNumber);
 #endif
             }
+            break;
+        }
+        case SON_KoCHNotificationNumber:
+        {
+            byte notificationNumber = ko.value(DPT_Value_1_Ucount);
+            logDebugP("play notification %d", notificationNumber);
+#if ARDUINO_ARCH_ESP32    
+            playNotification(notificationNumber);
+#endif
             break;
         }
     }
@@ -1226,21 +1219,9 @@ void SonosChannel::playNotification(byte notificationNumber)
 {
     if (_locked)
         return;
-    switch (notificationNumber)
-    {
-        case 1:
-            _sonosSpeaker->playNotification((const char*)ParamSON_NotificationUrl1, ParamSON_NotificationVolume1);
-            break;
-        case 2:
-            _sonosSpeaker->playNotification((const char*)ParamSON_NotificationUrl2, ParamSON_NotificationVolume2);
-            break;
-        case 3:
-            _sonosSpeaker->playNotification((const char*)ParamSON_NotificationUrl3, ParamSON_NotificationVolume3);
-            break;
-        case 4:
-            _sonosSpeaker->playNotification((const char*)ParamSON_NotificationUrl4, ParamSON_NotificationVolume4);
-            break;
-    }
+
+    auto _channelIndex = notificationNumber - 1;
+    _sonosSpeaker->playNotification(ParamSONNOT_NotificationUrlStr.c_str(), ParamSONNOT_NotificationVolume);
 }
 #endif
 
