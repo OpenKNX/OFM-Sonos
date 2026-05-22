@@ -1,5 +1,6 @@
 #include "SonosChannel.h"
 #include "SonosModule.h"
+#include "NetworkModule.h"
 
 void replaceAll(std::string& str,
                 const std::string& from,
@@ -33,27 +34,66 @@ SonosChannel::SonosChannel(SonosModule& sonosModule, uint8_t _channelIndex /* th
     _name = speakerIP.toString();
 }
 
-void SonosChannel::setup()
+void SonosChannel::online(bool online)
 {
+    if (_online == online)
+        return;
+    _online = online;
+    logInfoP("Speaker %s is now %s", _name.c_str(), _online ? "online" : "offline");
+    if (!ParamSON_CHDisableOnlineMonitor)
+        KoSON_CHOffline.value(!_online, DPT_Alarm);
+    updateLockState();
+}
+
+void SonosChannel::updateLockState(bool initialize)
+{
+    bool locked = !_online || !_enabled;
+    logDebugP("Updating lock state to %s because %s and %s", locked ? "locked" : "unlocked", _online ? "online" : "offline", _enabled ? "enabled" : "disabled");
+    if (_locked == locked && !initialize)
+        return;
+    _locked = locked;
+    if (_locked)
+    {
+        KoSON_CHPlayFeedback.valueCompare(false, DPT_Start);   
+    }
+#ifndef SONOS_DISABLE_CALLBACK
+    _sonosSpeaker->setCallback(_locked ? nullptr : this);
+#endif
+}
+
+void SonosChannel::setup()
+{ 
     if (ParamSON_CHChannelEnableKo)
     {
         if (KoSON_CHChannelEnabled.initialized())
         {
-            lockChannel(!KoSON_CHChannelEnabled.value(DPT_Switch));
+            _enabled = KoSON_CHChannelEnabled.value(DPT_Switch);
         }
         else
         {
             // if KO is not initialized, initialize it with current state
-            lockChannel(true); // lock channel until state is read
+            // lock channel until state is read
+            KoSON_CHChannelEnabled.valueNoSend(_enabled, DPT_Switch);
             KoSON_CHChannelEnabled.requestObjectRead();
         }
     }
     else
     {
-        lockChannel(false);
+        _enabled = true; // Assume always enabled
     }
-}
+    if (ParamSON_CHDisableOnlineMonitor)
+    {
+        _online = true; // Assume always online
+    }
+    else
+    {
+        KoSON_CHOffline.value(_online, DPT_Alarm);
 
+    }
+    if (_enabled)
+        _forcePing = true;
+    updateLockState(true);
+}
 
 const IPAddress SonosChannel::speakerIP()
 {
@@ -69,26 +109,26 @@ const std::string SonosChannel::logPrefix()
     return "Sonos.Channel";
 }
 
-void SonosChannel::lockChannel(bool lock)
-{
-    if (_locked == lock)
-        return;
-    _locked = lock;
-    if (_locked)
-    {
-        KoSON_CHPlayFeedback.valueCompare(false, DPT_Start);   
-    }
-#ifndef SONOS_DISABLE_CALLBACK
-    _sonosSpeaker->setCallback(_locked ? nullptr : this);
-#endif
-}
-
 void SonosChannel::loop()
 {
+    if (_sonosSpeaker == nullptr)
+        return;
+    if (_enabled && (_lastPingTime != 0 && millis() - _lastPingTime > 15000 || _forcePing))
+    {
+        _lastPingTime = 0;
+        _forcePing = false;
+        logDebugP("Pinging speaker with IP %s", _sonosSpeaker->getSpeakerIP().toString().c_str());
+        openknxNetwork.ping(_sonosSpeaker->getSpeakerIP(),
+            [this](IPAddress ip, bool reachable) {
+                logDebugP("Pinging speaker with IP %s is %s", _sonosSpeaker->getSpeakerIP().toString().c_str(), reachable ? "reachable" : "unreachable");
+                this->online(reachable);
+                _lastPingTime = millis();
+            }, 2);
+        _lastPingTime = millis();
+    }
     if (_locked)
         return;
-    if (_sonosSpeaker != nullptr)
-        _sonosSpeaker->loop();
+    _sonosSpeaker->loop();
 }
 
 void SonosChannel::notificationVolumeChanged(SonosSpeaker* speaker, uint8_t volume)
@@ -383,12 +423,17 @@ void SonosChannel::processInputKo(GroupObject& ko)
     auto index = SON_KoCalcIndex(ko.asap());
     if (index == SON_KoCHChannelEnabled)
     {
-        boolean enabled = ko.value(DPT_Switch);
-        logDebugP("Set channel enabled %d", enabled);
-        if (enabled)
-            lockChannel(false);
+        _enabled = ko.value(DPT_Switch);
+        logDebugP("Set channel enabled %d", _enabled);
+        if (_enabled)
+        {
+            _forcePing = true;
+        }
         else
-            lockChannel(true);
+        {
+            _lastPingTime = 0;
+        }
+        updateLockState();
         return;
     }
     if (_locked)

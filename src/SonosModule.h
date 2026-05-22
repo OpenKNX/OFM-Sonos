@@ -8,6 +8,9 @@
 #ifndef OPENKNX_DUALCORE
 #error Sonos Module requires OPENKNX_DUALCORE
 #endif
+#ifndef OPENKNX_PING
+#error "Sonos Module requires OPENKNX_PING"
+#endif
 class SonosChannel;
 
 class SonosModule : public SonosChannelOwnerModule

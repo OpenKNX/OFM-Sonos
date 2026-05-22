@@ -24,8 +24,10 @@
                 <Parameter Id="%AID%_UP-%TT%%CC%005" Offset="6" BitOffset="0" Name="CH%C%GroupRelativVolumeStep" ParameterType="%AID%_PT-SONRelativVolumeStep" Text="Relative Gruppen Lautstärkeänderung" Value="1" SuffixText="%" />
                 <!-- Channel Enable KO -->
                 <Parameter Id="%AID%_UP-%TT%%CC%007" Offset="7" BitOffset="0" Name="CH%C%ChannelEnableKo" ParameterType="%AID%_PT-CheckBox" Text="Freigabe Gruppenobjekt" Value="0" /> 
-                <!-- 7 Bits free-->
-                <Parameter Id="%AID%_UP-%TT%%CC%008" Offset="8" BitOffset="0" Name="CH%C%StandardNotification" ParameterType="%AID%_PT-SONNOTNumChannels" Text="Standard Benachrichtung Nr" Value="1" /> 
+                <!-- Disable Online Monitor -->
+                <Parameter Id="%AID%_UP-%TT%%CC%008" Offset="7" BitOffset="1" Name="CH%C%DisableOnlineMonitor" ParameterType="%AID%_PT-CheckBox" Text="Überwachung des Online Status abschalten" Value="0" />
+                <!-- 6 Bits free-->
+                <Parameter Id="%AID%_UP-%TT%%CC%009" Offset="8" BitOffset="0" Name="CH%C%StandardNotification" ParameterType="%AID%_PT-SONNOTNumChannels" Text="Standard Benachrichtung Nr" Value="1" /> 
               
                 <!-- %AID%_UP-%TT%%CC%0100 - %AID%_UP-%TT%%CC%800 -> Reserved for up to 89 Channels of SonosModule.Notifications.templ.xml to be downward compatible -->
                 <!-- Next Id = AID%_UP-%TT%%CC%900 -->
@@ -48,8 +50,10 @@
               <ParameterRef Id="%AID%_UP-%TT%%CC%006_R-%TT%%CC%00601" RefId="%AID%_UP-%TT%%CC%006" />
               <!-- Channel Enable KO -->
               <ParameterRef Id="%AID%_UP-%TT%%CC%007_R-%TT%%CC%00701" RefId="%AID%_UP-%TT%%CC%007" />
-              <!-- Standard Notification -->
+              <!-- Disable Online Monitor -->
               <ParameterRef Id="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" RefId="%AID%_UP-%TT%%CC%008" />
+              <!-- Standard Notification -->
+              <ParameterRef Id="%AID%_UP-%TT%%CC%009_R-%TT%%CC%00901" RefId="%AID%_UP-%TT%%CC%009" />
             </ParameterRefs>
             <ComObjectTable>
               <!-- Volume Percentage -->
@@ -95,15 +99,13 @@
               <!-- Start Default Notification -->
               <ComObject Id="%AID%_O-%TT%%CC%018" Number="%K18%" Name="CH%C%NotificationStart"   Text="%C% Standard Benachrichtigung starten"    FunctionText="Lautsprecher %C%: Eingang, Trigger=1"                     ObjectSize="1 Bit" DatapointType="DPST-1-17" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
               <!-- Start Notification Number -->
-              <ComObject Id="%AID%_O-%TT%%CC%019" Number="%K19%" Name="CH%C%NotificationNumber"   Text="%C% Benachrichtigung Nr. starten"        FunctionText="Lautsprecher %C%: Eingang, Kanalnummer"                   ObjectSize="1 Byte" DatapointType="DPST-5-10" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
+              <ComObject Id="%AID%_O-%TT%%CC%019" Number="%K19%" Name="CH%C%NotificationNumber"  Text="%C% Benachrichtigung Nr. starten"         FunctionText="Lautsprecher %C%: Eingang, Kanalnummer"                   ObjectSize="1 Byte" DatapointType="DPST-5-10" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
                   
               <!-- Kanal aktivieren -->
-              <ComObject Id="%AID%_O-%TT%%CC%020" Number="%K21%" Name="CH%C%ChannelEnabled"       Text="%C% Kanal aktivieren"                    FunctionText="Lautsprecher %C%: Eingang, Schalten, Deaktiviert=0 / Aktiviert=1"  ObjectSize="1 Bit" DatapointType="DPST-1-3" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Enabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
-      
-              <!-- Spare -->
-              <ComObject Id="%AID%_O-%TT%%CC%021" Number="%K22%" Name="CH%C%Spare"       Text="%C% Kanal aktivieren"                    FunctionText="Lautsprecher %C%: Eingang, Schalten, Deaktiviert=0 / Aktiviert=1"  ObjectSize="1 Bit" DatapointType="DPST-1-3" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Enabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
-      
-               
+              <ComObject Id="%AID%_O-%TT%%CC%020" Number="%K21%" Name="CH%C%ChannelEnabled"      Text="%C% Kanal aktivieren"                     FunctionText="Lautsprecher %C%: Eingang, Schalten, Deaktiviert=0 / Aktiviert=1"  ObjectSize="1 Bit" DatapointType="DPST-1-3" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Enabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
+              <!-- Online Status -->
+              <ComObject Id="%AID%_O-%TT%%CC%021" Number="%K22%" Name="CH%C%Offline"             Text="%C% Lautsprecher Offline"                 FunctionText="Lautsprecher %C%: Ausgang, Alarm, Online=0 / Offline=1"  ObjectSize="1 Bit" DatapointType="DPST-1-5" TransmitFlag="Enabled"  ReadFlag="Enabled"  UpdateFlag="Disabled" WriteFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled"  />         
+                   
             </ComObjectTable>
             <ComObjectRefs>
               <!-- Volume Percentage -->
@@ -153,6 +155,9 @@
               <!-- Channel enabled -->
               <ComObjectRef Id="%AID%_O-%TT%%CC%020_R-%TT%%CC%02001" RefId="%AID%_O-%TT%%CC%020" />
 
+              <!-- Online Status -->
+              <ComObjectRef Id="%AID%_O-%TT%%CC%021_R-%TT%%CC%02101" RefId="%AID%_O-%TT%%CC%021" />
+
             </ComObjectRefs>
           </Static>
           <Dynamic>
@@ -177,12 +182,21 @@
                             <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%007_R-%TT%%CC%00701" HelpContext="%DOC%"  />
                             <!-- Channel Disabled -->
                             <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%006_R-%TT%%CC%00601" HelpContext="%DOC%"  />
-                    
+                            <!-- Disable Online Monitor -->
+                            <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" HelpContext="%DOC%"  />
+                            <choose ParamRefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801">
+                              <when test="1" >  <!-- Online Monitor deactived -->
+                                   <ParameterSeparator Id="%AID%_PS-nnn" Text="Wenn der Online Montitor deaktiviert wird, muss das Freigabe Gruppenobjekt benutzt werden um einen Lautsprecher als Offline zu markieren. Anderfalls kann ein Lautsprecher der Offline ist das System stark beeinträchtigen." UIHint="Information" />
+                              </when>
+                             <when test="0" >  <!-- Online Monitor active -->
+                                <ParameterSeparator Id="%AID%_PS-nnn" Text="Über Ping-Telegramme (ICMP) wird der Online-Status alle 15 Sekunden geprüft." UIHint="Information" />
+                             </when>
+                            </choose>
                           </when>
                           <when test="2 3 4" >  <!-- active with control -->   
                             
                             <!-- Standard Notification -->
-                            <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" HelpContext="%DOC%" />
+                            <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%009_R-%TT%%CC%00901" HelpContext="%DOC%" />
                          
                           </when>
                               
@@ -211,7 +225,7 @@
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%006_R-%TT%%CC%00601" />
                             <!-- Previous/Next -->       
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%007_R-%TT%%CC%00701" />
-                              <!-- Stop -->       
+                            <!-- Stop -->       
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%008_R-%TT%%CC%00801" />
                           
                           </when> <!-- Einzelsteuerung -->
@@ -252,18 +266,23 @@
                             <!-- Start Default Notification -->
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%018_R-%TT%%CC%01801" />
                             <!-- Start Notification Number -->
-                            <ComObjectRefRef RefId="%AID%_O-%TT%%CC%019_R-%TT%%CC%01901" />
-                         
-
+                            <ComObjectRefRef RefId="%AID%_O-%TT%%CC%019_R-%TT%%CC%01901" />                       
                           </when>
                           <when test="!=0" >  <!-- active -->
                              <!-- Channel Enable KO -->
-                             <choose ParamRefId="%AID%_UP-%TT%%CC%007_R-%TT%%CC%00701">  <!--Channel Enable KO  -->
-                                <when test="1" >  
-                                  <!-- Channel enabled -->
-                                  <ComObjectRefRef RefId="%AID%_O-%TT%%CC%020_R-%TT%%CC%02001" />
-                                </when>
-                              </choose> 
+                            <choose ParamRefId="%AID%_UP-%TT%%CC%007_R-%TT%%CC%00701">  <!--Channel Enable KO  -->
+                              <when test="1" >  
+                                <!-- Channel enabled -->
+                                <ComObjectRefRef RefId="%AID%_O-%TT%%CC%020_R-%TT%%CC%02001" />
+                              </when>
+                            </choose> 
+                            <!-- Disable Online Monitor -->
+                            <choose ParamRefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801">
+                              <when test="0" >  <!-- Online Monitor active -->
+                                <!-- Online Status -->
+                                <ComObjectRefRef RefId="%AID%_O-%TT%%CC%021_R-%TT%%CC%02101" />
+                              </when>
+                            </choose>
                           </when>  
                         </choose> <!--Sonos Channel Usage  -->
                     </ParameterBlock>

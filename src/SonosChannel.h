@@ -9,7 +9,11 @@ class SonosModule;
 class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHandler
 {
     private:
-        bool _locked = true;
+        bool _locked = false;
+        bool _online = false;
+        bool _enabled = false;
+        bool _forcePing = false;
+        unsigned long _lastPingTime = 0;
         SonosModule& _sonosModule;
         SonosSpeaker* _sonosSpeaker = nullptr;
         String _name;
@@ -28,10 +32,11 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         void notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInfo& trackInfo) override;
         void joinChannel(uint8_t channelNumber);
         void joinNextPlayingGroup();
-        bool delegateCoordination(bool rejoinGroup);    
+        bool delegateCoordination(bool rejoinGroup);   
+        void online(bool online); 
+        void updateLockState(bool initialize = false);
 #if ARDUINO_ARCH_ESP32 
         void playNotification(byte notificationNumber);
-        void lockChannel(bool lock);
 #endif
     protected:
         void loop() override;
