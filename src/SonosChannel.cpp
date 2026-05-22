@@ -41,7 +41,7 @@ void SonosChannel::online(bool online)
     _online = online;
     logInfoP("Speaker %s is now %s", _name.c_str(), _online ? "online" : "offline");
     if (!ParamSON_CHDisableOnlineMonitor)
-        KoSON_CHOffline.value(!_online, DPT_Alarm);
+        KoSON_CHOnline.value(_online, DPT_Alarm);
     updateLockState();
 }
 
@@ -87,7 +87,7 @@ void SonosChannel::setup()
     }
     else
     {
-        KoSON_CHOffline.value(_online, DPT_Alarm);
+        KoSON_CHOnline.value(_online, DPT_Alarm);
 
     }
     if (_enabled)

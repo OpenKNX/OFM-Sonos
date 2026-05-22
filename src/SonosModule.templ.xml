@@ -104,7 +104,7 @@
               <!-- Kanal aktivieren -->
               <ComObject Id="%AID%_O-%TT%%CC%020" Number="%K21%" Name="CH%C%ChannelEnabled"      Text="%C% Kanal aktivieren"                     FunctionText="Lautsprecher %C%: Eingang, Schalten, Deaktiviert=0 / Aktiviert=1"  ObjectSize="1 Bit" DatapointType="DPST-1-3" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Enabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
               <!-- Online Status -->
-              <ComObject Id="%AID%_O-%TT%%CC%021" Number="%K22%" Name="CH%C%Offline"             Text="%C% Lautsprecher Offline"                 FunctionText="Lautsprecher %C%: Ausgang, Alarm, Online=0 / Offline=1"  ObjectSize="1 Bit" DatapointType="DPST-1-5" TransmitFlag="Enabled"  ReadFlag="Enabled"  UpdateFlag="Disabled" WriteFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled"  />         
+              <ComObject Id="%AID%_O-%TT%%CC%021" Number="%K22%" Name="CH%C%Online"             Text="%C% Lautsprecher Online"                 FunctionText="Lautsprecher %C%: Ausgang, Status, Offline=0 / Online=1"  ObjectSize="1 Bit" DatapointType="DPST-1-11" TransmitFlag="Enabled"  ReadFlag="Enabled"  UpdateFlag="Disabled" WriteFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled"  />         
                    
             </ComObjectTable>
             <ComObjectRefs>
@@ -175,13 +175,14 @@
                         <choose ParamRefId="%AID%_UP-%TT%%CC%001_R-%TT%%CC%00101">  <!--Sonos Channel Usage  -->
                           <when test="!=0" >  <!-- active -->
                             <!-- Parameter Sonos Name -->
-                            <ParameterRefRef IndentLevel="1" RefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" HelpContext="%DOC%" />                  
+                            <ParameterRefRef IndentLevel="1" RefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" HelpContext="%DOC%" />  
+                            <!-- Channel Disabled -->
+                            <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%006_R-%TT%%CC%00601" HelpContext="%DOC%"  />
+                                        
                             <!-- Parameter Sonos IP -->
                             <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%003_R-%TT%%CC%00301" HelpContext="%DOC%" /> 
                             <!-- Channel Enable KO -->
                             <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%007_R-%TT%%CC%00701" HelpContext="%DOC%"  />
-                            <!-- Channel Disabled -->
-                            <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%006_R-%TT%%CC%00601" HelpContext="%DOC%"  />
                             <!-- Disable Online Monitor -->
                             <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" HelpContext="%DOC%"  />
                             <choose ParamRefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801">
