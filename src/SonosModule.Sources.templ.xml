@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-model href="../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<?xml-model href="../../../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/20" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
   <ManufacturerData>
     <Manufacturer>
@@ -23,6 +23,8 @@
                 <!-- Source Uri Image-->
                 <Parameter Id="%AID%_UP-%TT%%CC%005" Offset="173" BitOffset="0" Name="CH%C%SourceUriImage" ParameterType="%AID%_PT-SONSourceUri" Text="Logobild URL" Value="" />
                 <!-- ^^^ 150 chars + 1 byte 0 terminator = 151 bytes ^^^-->
+
+                <!-- AID%_UP-%TT%%CC%010 - ID%_UP-%TT%%CC%800 used in   -->
               </Union>
             </Parameters>
             <ParameterRefs>

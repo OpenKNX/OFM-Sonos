@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-model href="../../../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/20" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
+  <ManufacturerData>
+    <Manufacturer>
+      <ApplicationPrograms>
+        <ApplicationProgram>
+          <Static>
+            <Parameters>
+
+              <!-- // M-00FA_A-AE30-05-0000_UP-2010010 -->
+
+              <!-- Notification sounds -->
+              <Union SizeInBit="1208">
+                <Memory CodeSegment="%MID%" Offset="1" BitOffset="0" />
+                <!-- Notification URL *** ID of SON Modul used to be downward compatible ** -->
+                <Parameter Id="%AID%_UP-2010%CC%0" Name="NotificationUrl%C%" ParameterType="%AID%_PT-SONNOTNotificationUri" Offset="0" BitOffset="0" Text="URL" Value="" />
+                <!-- ^^^ 150 chars = 150 bytes ^^^-->
+                <!-- Notification volume *** ID of SON Modul used to be downward compatible **  -->
+                <Parameter Id="%AID%_UP-2010%CC%1" Name="NotificationVolume%C%" ParameterType="%AID%_PT-SONNOTNotificationVolume" Offset="150" BitOffset="0" Text="Lautstärke" Value="25" SuffixText="%" />                
+              </Union> 
+            </Parameters>
+            <ParameterRefs>
+              <!-- Notification URL *** ID of SON Modul used to be downward compatible ** -->
+              <ParameterRef Id="%AID%_UP-2010%CC%0_R-2010%CC%001" RefId="%AID%_UP-2010%CC%0" Value="https://cdn.freesound.org/previews/555/555016_12434214-lq.mp3" />
+              <!-- Notification volume *** ID of SON Modul used to be downward compatible ** -->
+              <ParameterRef Id="%AID%_UP-2010%CC%1_R-2010%CC%101" RefId="%AID%_UP-2010%CC%1" />
+            </ParameterRefs>
+            <ComObjectTable>
+            </ComObjectTable>
+            <ComObjectRefs>
+            </ComObjectRefs>
+          </Static>
+          <Dynamic>
+            <ChannelIndependentBlock> 
+              <!-- Anzahl der Kanäle -->
+              <choose ParamRefId="%AID%_UP-%TT%100008_R-%TT%10000801">
+                <when test="&gt;=%C%">
+                  <ParameterBlock Id="%AID%_PB-%C%2" Name="Sonos%C%Notifications" Text="Benachrichtigung %C%" Icon="bell-outline" HelpContext="SON-SonosBenachrichtigung" >
+                    <ParameterBlock Id="%AID%_PB-%TT%%CC%02" Name="SON%C%NotificationWrapper" Inline="true">
+
+                      <!-- Benachrichtigung -->
+                      <ParameterSeparator Id="%AID%_PS-nnn" Text="Benachrichtigung %C%" UIHint="Headline" />
+
+                      <!-- Notification URL *** ID of SON Modul used to be downward compatible **  -->
+                      <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-2010%CC%0_R-2010%CC%001"  />
+
+                      <!-- Notification volume *** ID of SON Modul used to be downward compatible ** -->
+                      <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-2010%CC%1_R-2010%CC%101"  />
+                    
+                    </ParameterBlock>
+                  </ParameterBlock>
+                </when>
+              </choose>
+            </ChannelIndependentBlock>
+          </Dynamic>
+        </ApplicationProgram>
+      </ApplicationPrograms>
+    </Manufacturer>
+  </ManufacturerData>
+</KNX>

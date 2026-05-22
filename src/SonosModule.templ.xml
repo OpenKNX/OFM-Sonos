@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-model href="../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<?xml-model href="../../../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/20" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
   <ManufacturerData>
     <Manufacturer>
@@ -10,7 +10,7 @@
               <!-- Sonos Name -->
               <Parameter Id="%AID%_P-%TT%%CC%002" Name="CH%C%SonosName" ParameterType="%AID%_PT-SONSonosName" Text="Name" Value="" />
           
-              <Union SizeInBit="64">
+              <Union SizeInBit="72">
                 <Memory CodeSegment="%MID%" Offset="0" BitOffset="0" />
                 <!-- Sonos Channel Usage -->
                 <Parameter Id="%AID%_UP-%TT%%CC%001" Offset="0" BitOffset="0" Name="CH%C%SonosChannelUsage" ParameterType="%AID%_PT-SONSonosChannelUsage" Text="Verwendung" Value="0" />
@@ -25,8 +25,12 @@
                 <!-- Channel Enable KO -->
                 <Parameter Id="%AID%_UP-%TT%%CC%007" Offset="7" BitOffset="0" Name="CH%C%ChannelEnableKo" ParameterType="%AID%_PT-CheckBox" Text="Freigabe Gruppenobjekt" Value="0" /> 
                 <!-- 7 Bits free-->
+                <Parameter Id="%AID%_UP-%TT%%CC%008" Offset="8" BitOffset="0" Name="CH%C%StandardNotification" ParameterType="%AID%_PT-SONNOTNumChannels" Text="Standard Benachrichtung Nr" Value="1" /> 
+              
+                <!-- %AID%_UP-%TT%%CC%0100 - %AID%_UP-%TT%%CC%800 -> Reserved for up to 89 Channels of SonosModule.Notifications.templ.xml to be downward compatible -->
+                <!-- Next Id = AID%_UP-%TT%%CC%900 -->
               </Union>
-              <!-- Next Id  %AID%_UP-%TT%%CC%008 -->
+          
             </Parameters>
 
             <ParameterRefs>
@@ -44,6 +48,8 @@
               <ParameterRef Id="%AID%_UP-%TT%%CC%006_R-%TT%%CC%00601" RefId="%AID%_UP-%TT%%CC%006" />
               <!-- Channel Enable KO -->
               <ParameterRef Id="%AID%_UP-%TT%%CC%007_R-%TT%%CC%00701" RefId="%AID%_UP-%TT%%CC%007" />
+              <!-- Standard Notification -->
+              <ParameterRef Id="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" RefId="%AID%_UP-%TT%%CC%008" />
             </ParameterRefs>
             <ComObjectTable>
               <!-- Volume Percentage -->
@@ -84,23 +90,20 @@
               <!-- Source Selection -->
               <ComObject Id="%AID%_O-%TT%%CC%016" Number="%K16%" Name="CH%C%SourceNumber"        Text="%C% Tonquelle aktivieren"                 FunctionText="Lautsprecher %C%: Eingang, Tonquellennummer"              ObjectSize="1 Byte" DatapointType="DPST-5-10" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
               <!-- Source Selection State-->    
-              <ComObject Id="%AID%_O-%TT%%CC%017" Number="%K17%" Name="CH%C%SourceState"         Text="%C% Tonquelle Status"                     FunctionText="Lautsprecher %C%: Ausgang, Spielt nicht=0 / Spielt=1"   ObjectSize="1 Byte" DatapointType="DPST-5-10" TransmitFlag="Enabled"  ReadFlag="Enabled"  UpdateFlag="Disabled" WriteFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />  
+              <ComObject Id="%AID%_O-%TT%%CC%017" Number="%K17%" Name="CH%C%SourceState"         Text="%C% Tonquelle Status"                     FunctionText="Lautsprecher %C%: Ausgang, Spielt nicht=0 / Spielt=1"     ObjectSize="1 Byte" DatapointType="DPST-5-10" TransmitFlag="Enabled"  ReadFlag="Enabled"  UpdateFlag="Disabled" WriteFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />  
 
-              <!-- Notification Sound 1 -->
-              <ComObject Id="%AID%_O-%TT%%CC%018" Number="%K18%" Name="CH%C%NotificationSound1"   Text="%C% Benachrichtung 1 starten"            FunctionText="Lautsprecher %C%: Eingang, Trigger=1"                     ObjectSize="1 Bit" DatapointType="DPST-1-17" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
-              <!-- Notification Sound 2 -->
-              <ComObject Id="%AID%_O-%TT%%CC%019" Number="%K19%" Name="CH%C%NotificationSound2"   Text="%C% Benachrichtung 2 starten"            FunctionText="Lautsprecher %C%: Eingang, Trigger=1"                     ObjectSize="1 Bit" DatapointType="DPST-1-17" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
-              <!-- Notification Sound 3 -->
-              <ComObject Id="%AID%_O-%TT%%CC%020" Number="%K20%" Name="CH%C%NotificationSound3"   Text="%C% Benachrichtung 3 starten"            FunctionText="Lautsprecher %C%: Eingang, Trigger=1"                     ObjectSize="1 Bit" DatapointType="DPST-1-17" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
-              <!-- Notification Sound 4 -->
-              <ComObject Id="%AID%_O-%TT%%CC%021" Number="%K21%" Name="CH%C%NotificationSound4"   Text="%C% Benachrichtung 4 starten"            FunctionText="Lautsprecher %C%: Eingang, Trigger=1"                     ObjectSize="1 Bit" DatapointType="DPST-1-17" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
-              
-              <!-- Reserve -->
-              <ComObject Id="%AID%_O-%TT%%CC%022" Number="%K22%" Name="CH%C%Spare4"   Text="%C% Reserve"            FunctionText="Lautsprecher %C%: Eingang"                     ObjectSize="1 Bit" DatapointType="DPST-1-17" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
-              
+              <!-- Start Default Notification -->
+              <ComObject Id="%AID%_O-%TT%%CC%018" Number="%K18%" Name="CH%C%NotificationStart"   Text="%C% Standard Benachrichtigung starten"    FunctionText="Lautsprecher %C%: Eingang, Trigger=1"                     ObjectSize="1 Bit" DatapointType="DPST-1-17" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
+              <!-- Start Notification Number -->
+              <ComObject Id="%AID%_O-%TT%%CC%019" Number="%K19%" Name="CH%C%NotificationNumber"   Text="%C% Benachrichtigung Nr. starten"        FunctionText="Lautsprecher %C%: Eingang, Kanalnummer"                   ObjectSize="1 Byte" DatapointType="DPST-5-10" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Disabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
+                  
               <!-- Kanal aktivieren -->
-              <ComObject Id="%AID%_O-%TT%%CC%023" Number="%K23%" Name="CH%C%ChannelEnabled"       Text="%C% Kanal aktivieren"                    FunctionText="Lautsprecher %C%: Eingang, Schalten, Deaktiviert=0 / Aktiviert=1"  ObjectSize="1 Bit" DatapointType="DPST-1-3" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Enabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
+              <ComObject Id="%AID%_O-%TT%%CC%020" Number="%K21%" Name="CH%C%ChannelEnabled"       Text="%C% Kanal aktivieren"                    FunctionText="Lautsprecher %C%: Eingang, Schalten, Deaktiviert=0 / Aktiviert=1"  ObjectSize="1 Bit" DatapointType="DPST-1-3" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Enabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
       
+              <!-- Spare -->
+              <ComObject Id="%AID%_O-%TT%%CC%021" Number="%K22%" Name="CH%C%Spare"       Text="%C% Kanal aktivieren"                    FunctionText="Lautsprecher %C%: Eingang, Schalten, Deaktiviert=0 / Aktiviert=1"  ObjectSize="1 Bit" DatapointType="DPST-1-3" TransmitFlag="Disabled" ReadFlag="Disabled" WriteFlag="Enabled"  UpdateFlag="Enabled" CommunicationFlag="Enabled" ReadOnInitFlag="Disabled" />         
+      
+               
             </ComObjectTable>
             <ComObjectRefs>
               <!-- Volume Percentage -->
@@ -141,17 +144,14 @@
               <!-- Source Selection State -->
               <ComObjectRef Id="%AID%_O-%TT%%CC%017_R-%TT%%CC%01701" RefId="%AID%_O-%TT%%CC%017" Text="{{0: Lautsprecher %C%}}: Tonquellen Nr Status"                TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
 
-              <!-- Notification 1 -->
-              <ComObjectRef Id="%AID%_O-%TT%%CC%018_R-%TT%%CC%01801" RefId="%AID%_O-%TT%%CC%018" Text="{{0: Lautsprecher %C%}}: Benachrichtung 1 starten"            TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
-              <!-- Notification 2 -->
-              <ComObjectRef Id="%AID%_O-%TT%%CC%019_R-%TT%%CC%01901" RefId="%AID%_O-%TT%%CC%019" Text="{{0: Lautsprecher %C%}}: Benachrichtung 2 starten"            TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
-              <!-- Notification 3 -->
-              <ComObjectRef Id="%AID%_O-%TT%%CC%020_R-%TT%%CC%02001" RefId="%AID%_O-%TT%%CC%020" Text="{{0: Lautsprecher %C%}}: Benachrichtung 3 starten"            TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
-              <!-- Notification 4 -->
-              <ComObjectRef Id="%AID%_O-%TT%%CC%021_R-%TT%%CC%02101" RefId="%AID%_O-%TT%%CC%021" Text="{{0: Lautsprecher %C%}}: Benachrichtung 4 starten"            TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
-
+              <!-- Benachrichtigungs starten -->
+              <ComObjectRef Id="%AID%_O-%TT%%CC%018_R-%TT%%CC%01801" RefId="%AID%_O-%TT%%CC%018" Text="{{0: Lautsprecher %C%}}: Benachrichtung starten"            TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
+              
+              <!-- Benachrichtigungsnummer -->
+              <ComObjectRef Id="%AID%_O-%TT%%CC%019_R-%TT%%CC%01901" RefId="%AID%_O-%TT%%CC%019" Text="{{0: Lautsprecher %C%}}: Benachrichtigung Nr starten"            TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
+          
               <!-- Channel enabled -->
-              <ComObjectRef Id="%AID%_O-%TT%%CC%023_R-%TT%%CC%02301" RefId="%AID%_O-%TT%%CC%023" />
+              <ComObjectRef Id="%AID%_O-%TT%%CC%020_R-%TT%%CC%02001" RefId="%AID%_O-%TT%%CC%020" />
 
             </ComObjectRefs>
           </Static>
@@ -179,7 +179,16 @@
                             <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%006_R-%TT%%CC%00601" HelpContext="%DOC%"  />
                     
                           </when>
+                          <when test="2 3 4" >  <!-- active with control -->   
+                            
+                            <!-- Standard Notification -->
+                            <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%%CC%008_R-%TT%%CC%00801" HelpContext="%DOC%" />
+                         
+                          </when>
+                              
                           <when test="2 4" >  <!-- Einzelsteuerung -->
+
+                            
                             <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                             <ParameterSeparator Id="%AID%_PS-nnn" Text="Einzelsteuerung" UIHint="Headline" />
 
@@ -207,6 +216,7 @@
                           
                           </when> <!-- Einzelsteuerung -->
                           <when test="3 4" >  <!-- Gruppensteuerung -->
+
                             <ParameterSeparator Id="%AID%_PS-nnn" Text="" UIHint="HorizontalRuler" />
                             <!-- Group Control -->
                             <ParameterSeparator Id="%AID%_PS-nnn" Text="Gruppensteuerung" UIHint="Headline" />
@@ -227,7 +237,8 @@
       
                           </when> <!-- Gruppensteuerung -->
 
-                          <when test="2 3 4" >  <!-- active with control -->           
+                          <when test="2 3 4" >  <!-- active with control -->   
+                                    
                             <!-- Join next active group -->
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%014_R-%TT%%CC%01401" />
                             <!-- Join channel number -->
@@ -238,14 +249,11 @@
                             <!-- Source Selection State -->
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%017_R-%TT%%CC%01701" />
 
-                            <!-- Notification 1 -->
+                            <!-- Start Default Notification -->
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%018_R-%TT%%CC%01801" />
-                            <!-- Notification 2 -->
+                            <!-- Start Notification Number -->
                             <ComObjectRefRef RefId="%AID%_O-%TT%%CC%019_R-%TT%%CC%01901" />
-                            <!-- Notification 3 -->
-                            <ComObjectRefRef RefId="%AID%_O-%TT%%CC%020_R-%TT%%CC%02001" />
-                            <!-- Notification 4 -->
-                            <ComObjectRefRef RefId="%AID%_O-%TT%%CC%021_R-%TT%%CC%02101" />
+                         
 
                           </when>
                           <when test="!=0" >  <!-- active -->
@@ -253,7 +261,7 @@
                              <choose ParamRefId="%AID%_UP-%TT%%CC%007_R-%TT%%CC%00701">  <!--Channel Enable KO  -->
                                 <when test="1" >  
                                   <!-- Channel enabled -->
-                                  <ComObjectRefRef RefId="%AID%_O-%TT%%CC%023_R-%TT%%CC%02301" />
+                                  <ComObjectRefRef RefId="%AID%_O-%TT%%CC%020_R-%TT%%CC%02001" />
                                 </when>
                               </choose> 
                           </when>  

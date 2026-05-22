@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml-model href="../../Organization/knxprod-support/knx_project_14/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<?xml-model href="../../../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/14" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
   <op:config name="%SONSRC_NumChannelsDefault%" value="0" />
   <ManufacturerData>
@@ -11,7 +11,7 @@
               <ParameterType Id="%AID%_PT-SONSRCNumChannels" Name="SONSRCNumChannels">
 								<TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="%N%" />
 							</ParameterType>  
-              <ParameterType Id="%AID%_PT-SONSourceType" Name="SourceType">
+              <ParameterType Id="%AID%_PT-SONSourceType" Name="SONSourceType">
                 <TypeRestriction Base="Value" SizeInBit="7">
                   <Enumeration Text="Inaktiv" Value="0" Id="%ENID%" />
                   <Enumeration Text="Radio Stream" Value="1" Id="%ENID%" />
@@ -24,10 +24,10 @@
                   <Enumeration Text="Sonos Uri"  Value="8" Id="%ENID%" />
                 </TypeRestriction>
               </ParameterType>
-              <ParameterType Id="%AID%_PT-SONSourceUri" Name="SourceUri">
+              <ParameterType Id="%AID%_PT-SONSourceUri" Name="SONSourceUri">
                 <TypeText SizeInBit="1200" /> <!-- 150 characters -->
               </ParameterType>
-              <ParameterType Id="%AID%_PT-SONSourceTitle" Name="SourceTitle">
+              <ParameterType Id="%AID%_PT-SONSourceTitle" Name="SONSourceTitle">
                 <TypeText SizeInBit="160" /> <!-- 20 characters -->
               </ParameterType>
             </ParameterTypes>

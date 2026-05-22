@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-model href="../../../../Organization/knxprod-support/knx_project_20/knx-editor.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<KNX xmlns:op="http://github.com/OpenKNX/OpenKNXproducer" xmlns="http://knx.org/xml/project/14" CreatedBy="KNX MT" ToolVersion="5.1.255.16695">
+  <op:config name="%SONNOT_NumChannelsDefault%" value="1" />
+  <ManufacturerData>
+    <Manufacturer>
+      <ApplicationPrograms>
+        <ApplicationProgram>
+          <Static>
+            <ParameterTypes>
+              <ParameterType Id="%AID%_PT-SONNOTNumChannels" Name="SONNOTNumChannels">
+								<TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="%N%" />
+							</ParameterType>  
+              <ParameterType Id="%AID%_PT-SONNOTNotificationUri" Name="SONNOTNotificationUri">
+                <TypeText SizeInBit="1200" /> <!-- 150 characters -->
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-SONNOTNotificationVolume" Name="SONNOTNotificationVolume">
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="100" />
+              </ParameterType>
+            </ParameterTypes>
+            <Parameters>
+                <Union SizeInBit="8">
+                <Memory CodeSegment="%MID%" Offset="0" BitOffset="0" />
+                <!-- Number of channels -->
+                <Parameter Id="%AID%_UP-%TT%100008" Name="VisibleChannels" ParameterType="%AID%_PT-SONNOTNumChannels" Offset="0" BitOffset="0" Text="Anzahl der Benachrichtigungen" Value="%SONNOT_NumChannelsDefault%" SuffixText=" von %N%" />
+              </Union>
+            </Parameters>
+            <ParameterRefs>
+              <!-- Number of channels -->
+              <ParameterRef Id="%AID%_UP-%TT%100008_R-%TT%10000801" RefId="%AID%_UP-%TT%100008" />
+            </ParameterRefs>
+          </Static>
+          <Dynamic>
+            <Channel Name="MainChannel" Text="Sonos Benachrichtigungen" Number="%PREFIX%" Id="%AID%_CH-%TT%" Icon="bell-outline">
+
+              <ParameterBlock Id="%AID%_PB-nnn" Name="SonosSettings" Text="Allgemein" Icon="cog-outline" HelpContext="SON-SonosBenachrichtigungen">
+
+								<ParameterSeparator Id="%AID%_PS-nnn" Text="Sonos Benachrichtigungen" UIHint="Headline" />
+									
+                <!-- Kanalanzahl -->
+								<ParameterRefRef RefId="%AID%_UP-%TT%100008_R-%TT%10000801" HelpContext="SON-Anzahl-der-Benachrichtigungen" />
+              </ParameterBlock>
+
+              <op:include href="SonosModule.Notifications.templ.xml" xpath="//Dynamic/ChannelIndependentBlock/*" type="template" prefix="SONNOT" IsInner="true" />
+           
+              <!-- More Page -->
+						  <choose ParamRefId="%AID%_UP-%TT%100008_R-%TT%10000801">
+                <when test="&lt;%N%">
+                  <ParameterBlock Id="%AID%_PB-nnn" Name="SONNOTAdditionalChannels" Text="(mehr)" Icon="dots-horizontal" HelpContext="SON-Mehr-Benachrichtigungen" >										<!-- HelpContext="Empty" -->
+                    <ParameterSeparator Id="%AID%_PS-nnn" Text="Tonquellen" UIHint="Headline" />
+                    <!-- Number of channels -->
+                  <ParameterRefRef IndentLevel="1" RefId="%AID%_UP-%TT%100008_R-%TT%10000801" HelpContext="SON-Anzahl-der-Benachrichtigungen" />
+                </ParameterBlock>
+              </when>
+              </choose>
+            </Channel>
+
+        </Dynamic>
+        </ApplicationProgram>
+      </ApplicationPrograms>
+    </Manufacturer>
+  </ManufacturerData>
+</KNX>

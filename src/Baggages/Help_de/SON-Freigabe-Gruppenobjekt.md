@@ -6,6 +6,6 @@ Ansonsten kommt es zu Fehlern durch lange blockierende Aufrufe in der Steuerung.
 Wir diese Option aktiviert, wird das Gruppenobjekt 'Kanal aktivieren' eingeblendet. 
 Diese muss mit der Gruppenadresse die den Sonoslautsprecher über den Aktor einschaltet verbunden werden.
 
-0 bedeutet das der Kanal inaktiv ist.
+0 bedeutet das der Kanal inaktiv ist
 1 bedeutet das der Kanal aktiv ist
 

@@ -29,27 +29,6 @@ Hinweis:
 Die Liste aller Sonos ist notwendig, damit die Gruppenumschaltungen richtig erfolgen.
 Soll ein Lautsprecher nicht über KNX gesteuert werden, kann dieser als "Nur Gruppenteilnehmer" definiert werden.
 
-### Benachrichtung 1-4
-
-Es können 4 Benachrichtungstöne konfiguriert werden die über ein Objekt aktiviert werden.
-
-<!-- DOC HelpContext="NotificationUrl" -->
-#### URL
-
-URL auf eine MP3-Datei.
-
-Beispiele:
-
-- https://cdn.freesound.org/previews/555/555016_12434214-lq.mp3
-- https://cdn.freesound.org/previews/410/410384_2462-lq.mp3
-- https://cdn.freesound.org/previews/428/428860_8610345-lq.mp3
-- https://cdn.freesound.org/previews/27/27880_208079-lq.mp3
-
-<!-- DOC HelpContext="NotificationVolume" -->
-#### Lautstärke
-
-Lautstärke für die Benachrichtigung.
-
 <!-- DOC -->
 ### Verwendung
 
@@ -109,6 +88,11 @@ Die relative Lautstärkeänderung in Prozent bei Verwendung des Eingangs "Lautst
 
 Die relative Lautstärkeänderung der Gruppe in Prozent bei Verwendung des Eingangs "Gruppenlautstärke Verringern/Erhöhen"
 
+<!-- DOC -->
+### Standard Benachrichtung Nr
+
+Die Benachrichtung die abgespielt werden soll wenn das Gruppenobjekt "Standard Benachrichtigung starten" ein Trigger Signal (1) empfängt.
+
 <!-- DOC HelpContext="Mehr-Lautsprecher" -->
 ## (Mehr)
 
@@ -117,7 +101,7 @@ Auf dieser Seite wird die Anzahl der Lautsprecher festgelegt
 <!-- DOC -->
 ### Anzahl der Tonquellen
 
-Die Erhöhung des Wertes fügt ein Seite fügt einen Lautsprecher hinzu.
+Die Erhöhung des Wertes fügt ein Seite unter Lautsprecher hinzu.
 Die Verringerung des Wertes entfernt den letzten Lautsprecher.
 
 
@@ -125,9 +109,6 @@ Die Verringerung des Wertes entfernt den letzten Lautsprecher.
 # Sonos Tonquellen
 
 Es können mehrere Tonquellen definiert werden, die über ein Objekt abgespielt werden könnnen.
-
-<!-- DOC HelpContext="Mehr-Tonquellen" -->
-## (Mehr)
 
 Auf dieser Seite wird die Anzahl der Tonquellen festgelegt
 
@@ -273,3 +254,47 @@ Dieser Parameter ist optional.
 ### Zufallswiedergabe
 
 Stellt die Sonos URI mehrere Titel bereit, werden diese bei aktivierter Option in zufälliger Reihenfolge wiedergegeben.
+
+<!-- DOC HelpContext="Mehr-Tonquellen" -->
+## (Mehr)
+
+Auf dieser Seite wird die Anzahl der Tonquellen festgelegt
+
+<!-- DOC HelpContext="SonosBenachrichtigungen" -->
+# Sonos Benachrichtigung
+
+Es können mehrere Benachrichtungstöne definiert werden, die über ein Objekt abgespielt werden könnnen.
+
+<!-- DOC -->
+### Anzahl der Benachrichtigungen
+
+Die Erhöhung des Wertes fügt ein Seite unter Benachrichtigungen hinzu.
+Die Verringerung des Wertes entfernt die letzte Benachrichtigungen.
+
+<!-- DOC HelpContext="SonosBenachrichtigung" -->
+## Benachrichtung
+
+Es können 4 Benachrichtungstöne konfiguriert werden die über ein Objekt aktiviert werden.
+
+
+<!-- DOC HelpContext="NotificationUrl" -->
+#### URL
+
+URL auf eine MP3-Datei.
+
+Beispiele:
+
+- https://cdn.freesound.org/previews/555/555016_12434214-lq.mp3
+- https://cdn.freesound.org/previews/410/410384_2462-lq.mp3
+- https://cdn.freesound.org/previews/428/428860_8610345-lq.mp3
+- https://cdn.freesound.org/previews/27/27880_208079-lq.mp3
+
+<!-- DOC HelpContext="NotificationVolume" -->
+#### Lautstärke
+
+Lautstärke für die Benachrichtigung.
+
+<!-- DOC HelpContext="Mehr-Benachrichtigungen" -->
+## (Mehr)
+
+Auf dieser Seite wird die Anzahl der Benachrichtigungen festgelegt
