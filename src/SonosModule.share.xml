@@ -15,13 +15,13 @@
               <ParameterType Id="%AID%_PT-SONNumChannelsWithout0" Name="SONNumChannelsWithout0">
 								<TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="1" maxInclusive="%N%" />
 							</ParameterType>
-              <ParameterType Id="%AID%_PT-SONSonosChannelUsage" Name="SONSonosChannelUsage">
+              <ParameterType Id="%AID%_PT-SONSonosChannelUsage" Name="SONSonosChannelUsage" op:headerExport="enum">
                 <TypeRestriction Base="Value" SizeInBit="7">
-                  <Enumeration Text="Inaktiv"                          Value="0" Id="%ENID%" />
-                  <Enumeration Text="Einzelsteuerung"                  Value="2" Id="%ENID%" />
-                  <Enumeration Text="Gruppensteuerung"                 Value="3" Id="%ENID%" />
-                  <Enumeration Text="Einzel- und Gruppensteurung"      Value="4" Id="%ENID%" />
-                  <Enumeration Text="Nur Gruppenteilnehmer"            Value="5" Id="%ENID%" />            
+                  <Enumeration Text="Inaktiv"                          Value="0" Id="%ENID%" op:headerName="Disabled"/>
+                  <Enumeration Text="Einzelsteuerung"                  Value="2" Id="%ENID%" op:headerName="SingleControl"/>
+                  <Enumeration Text="Gruppensteuerung"                 Value="3" Id="%ENID%" op:headerName="GroupControl"/>
+                  <Enumeration Text="Einzel- und Gruppensteurung"      Value="4" Id="%ENID%" op:headerName="SingleAndGroupControl"/>
+                  <Enumeration Text="Nur Gruppenteilnehmer"            Value="5" Id="%ENID%" op:headerName="GroupOnly"/>            
                 </TypeRestriction>
               </ParameterType>   
               <ParameterType Id="%AID%_PT-SONSonosName" Name="SONSonosName">

@@ -17,7 +17,7 @@ SonosChannel *firstChannel = nullptr;
 
 OpenKNX::Channel *SonosModule::createChannel(uint8_t _channelIndex /* this parameter is used in macros, do not rename */)
 {
-    if (ParamSON_CHSonosChannelUsage <= 1)
+    if (ParamSON_CHSonosChannelUsage == PT_SONSonosChannelUsage::Disabled)
         return nullptr;
     if (ParamSON_CHChannelDisabled)
         return nullptr;

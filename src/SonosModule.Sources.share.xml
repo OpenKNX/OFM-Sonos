@@ -11,17 +11,17 @@
               <ParameterType Id="%AID%_PT-SONSRCNumChannels" Name="SONSRCNumChannels">
 								<TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="%N%" />
 							</ParameterType>  
-              <ParameterType Id="%AID%_PT-SONSourceType" Name="SONSourceType">
+              <ParameterType Id="%AID%_PT-SONSourceType" Name="SONSourceType" op:headerExport="enum" >
                 <TypeRestriction Base="Value" SizeInBit="7">
-                  <Enumeration Text="Inaktiv" Value="0" Id="%ENID%" />
-                  <Enumeration Text="Radio Stream" Value="1" Id="%ENID%" />
-                  <Enumeration Text="Http"  Value="2" Id="%ENID%" />
-                  <Enumeration Text="Musikbibliothek Datei"  Value="3" Id="%ENID%" />
-                  <Enumeration Text="Musikbibliothek Verzeichnis"  Value="4" Id="%ENID%" />
-                  <Enumeration Text="Line In"  Value="5" Id="%ENID%" />
-                  <Enumeration Text="TV In (Nur mit Playbar)"  Value="6" Id="%ENID%" />
-                  <Enumeration Text="Sonos Playlist"  Value="7" Id="%ENID%" />
-                  <Enumeration Text="Sonos Uri"  Value="8" Id="%ENID%" />
+                  <Enumeration Text="Inaktiv" Value="0" Id="%ENID%" op:headerName="Disabled" />
+                  <Enumeration Text="Radio Stream" Value="1" Id="%ENID%" op:headerName="RadioStream" />
+                  <Enumeration Text="Http"  Value="2" Id="%ENID%" op:headerName="Http" />
+                  <Enumeration Text="Musikbibliothek Datei"  Value="3" Id="%ENID%" op:headerName="MusicLibraryFile" />
+                  <Enumeration Text="Musikbibliothek Verzeichnis"  Value="4" Id="%ENID%" op:headerName="MusicLibraryDirectory" />
+                  <Enumeration Text="Line In"  Value="5" Id="%ENID%" op:headerName="LineIn" />
+                  <Enumeration Text="TV In (Nur mit Playbar)"  Value="6" Id="%ENID%" op:headerName="TVIn" />
+                  <Enumeration Text="Sonos Playlist"  Value="7" Id="%ENID%" op:headerName="SonosPlaylist" />
+                  <Enumeration Text="Sonos Uri"  Value="8" Id="%ENID%" op:headerName="SonosUri" />
                 </TypeRestriction>
               </ParameterType>
               <ParameterType Id="%AID%_PT-SONSourceUri" Name="SONSourceUri">

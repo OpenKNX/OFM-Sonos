@@ -24,8 +24,8 @@ SonosChannel::SonosChannel(SonosModule& sonosModule, uint8_t _channelIndex /* th
     // <Enumeration Text="Einzel- und Gruppensteurung"      Value="4" Id="%ENID%" />
     // <Enumeration Text="Nur Gruppenteilnehmer"            Value="5" Id="%ENID%" />            
     auto usage = ParamSON_CHSonosChannelUsage;
-    _singleControl = usage == 2 || usage == 4;
-    _groupControl = usage == 3 || usage == 4;
+    _singleControl = usage == PT_SONSonosChannelUsage::SingleControl || usage == PT_SONSonosChannelUsage::SingleAndGroupControl;
+    _groupControl = usage == PT_SONSonosChannelUsage::GroupControl || usage == PT_SONSonosChannelUsage::SingleAndGroupControl;
     auto parameterIP = (uint32_t)ParamSON_CHSonosIPAddress;
     uint32_t arduinoIP = ((parameterIP & 0xFF000000) >> 24) | ((parameterIP & 0x00FF0000) >> 8) | ((parameterIP & 0x0000FF00) << 8) | ((parameterIP & 0x000000FF) << 24);
     IPAddress speakerIP = IPAddress(arduinoIP);
@@ -295,7 +295,7 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
             auto sourceType = ParamSONSRC_CHSourceType;
             switch (sourceType)
             {
-                case 1: // Radio
+                case PT_SONSourceType::RadioStream:
                 {
                     if (trackInfo.uri.startsWith(SonosApi::DefaultSchemaInternetRadio))
                     {
@@ -304,13 +304,13 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
                     }
                     break;
                 }
-                case 2: // Http
+                case PT_SONSourceType::Http: 
                 {
                     if (strcmp(trackInfo.uri.c_str(), ParamSONSRC_CHSourceUriStr.c_str()) == 0)
                         sourceNumber = _channelIndex + 1;
                     break;
                 }
-                case 3: // Music libary file
+                case PT_SONSourceType::MusicLibraryFile: 
                 {
                     if (trackInfo.uri.startsWith(SonosApi::SchemaMusicLibraryFile))
                     {
@@ -320,7 +320,7 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
                     }
                     break;
                 }
-                case 4: // Music libary dir
+                case PT_SONSourceType::MusicLibraryDirectory: 
                 {
                     if (trackInfo.uri.startsWith(SonosApi::SchemaMusicLibraryFile))
                     {
@@ -333,7 +333,7 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
                     }
                     break;
                 }
-                case 5: // Line In
+                case PT_SONSourceType::LineIn: 
                 {
                     if (trackInfo.uri.startsWith(SonosApi::SchemaLineIn))
                     {
@@ -344,7 +344,7 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
                     }
                     break;
                 }
-                case 6: // TV In
+                case PT_SONSourceType::TVIn: 
                 {
                     if (trackInfo.uri.startsWith(SonosApi::SchemaTVIn))
                     {
@@ -358,11 +358,11 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
                     }
                     break;
                 }
-                case 7: // Sonos playlist
+                case PT_SONSourceType::SonosPlaylist: 
                 {
                     // Can not be detected
                 }
-                case 8: // Sonos Uri
+                case PT_SONSourceType::SonosUri: 
                 {
                     if (trackInfo.uri == ParamSONSRC_CHSourceUriStr.c_str())
                         sourceNumber = _channelIndex + 1;
@@ -505,28 +505,28 @@ void SonosChannel::processInputKo(GroupObject& ko)
                 return;
             switch (sourceType)
             {
-                case 1: // Radio
+                case PT_SONSourceType::RadioStream:
                 {
                     groupCoordinator->playInternetRadio(ParamSONSRC_CHSourceUriStr.c_str(), ParamSONSRC_CHSourceTitleStr.c_str(), ParamSONSRC_CHSourceUriImageStr.c_str());
                     break;
                 }
-                case 2: // Http
+                case PT_SONSourceType::Http:
                 {
                     groupCoordinator->playFromHttp(ParamSONSRC_CHSourceUriStr.c_str());
                     break;
                 }
-                case 3: // Music libary file
+                case PT_SONSourceType::MusicLibraryFile:
                 {
                     groupCoordinator->playMusicLibraryFile(ParamSONSRC_CHSourceUriStr.c_str());
                     break;
                 }
-                case 4: // Music libary dir
+                case PT_SONSourceType::MusicLibraryDirectory:
                 {
                     groupCoordinator->setShuffle(ParamSONSRC_CHRandom);
                     groupCoordinator->playMusicLibraryDirectory(ParamSONSRC_CHSourceUriStr.c_str());
                     break;
                 }
-                case 5: // Line In
+                case PT_SONSourceType::LineIn:
                 {
                     if (groupCoordinator != _sonosSpeaker)
                     {
@@ -535,7 +535,7 @@ void SonosChannel::processInputKo(GroupObject& ko)
                     _sonosSpeaker->playLineIn();
                     break;
                 }
-                case 6: // TV In
+                case PT_SONSourceType::TVIn:
                 {
                     if (groupCoordinator != _sonosSpeaker)
                     {
@@ -544,13 +544,13 @@ void SonosChannel::processInputKo(GroupObject& ko)
                     _sonosSpeaker->playTVIn();
                     break;
                 }
-                case 7: // Sonos playlist
+                case PT_SONSourceType::SonosPlaylist: 
                 {
                     groupCoordinator->setShuffle(ParamSONSRC_CHRandom);
                     groupCoordinator->playSonosPlaylist(ParamSONSRC_CHSourceUriStr.c_str());
                     break;
                 }
-                case 8: // Sonos Uri
+                case PT_SONSourceType::SonosUri: 
                 {
                     if (!ParamSONSRC_CHSourceTitleStr.empty() || !ParamSONSRC_CHSourceUriImageStr.empty())
                         groupCoordinator->playInternetRadio(ParamSONSRC_CHSourceUriStr.c_str(), ParamSONSRC_CHSourceTitleStr.c_str(), ParamSONSRC_CHSourceUriImageStr.c_str(), "");
