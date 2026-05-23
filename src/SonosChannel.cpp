@@ -1416,3 +1416,8 @@ uint8_t SonosChannel::getChannelIndex()
 {
    return _channelIndex;
 }
+
+bool SonosChannel::isOnline() const
+{
+    return _online;
+}

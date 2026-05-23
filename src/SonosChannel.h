@@ -67,5 +67,6 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         SonosApiPlayState getPlayState();
         TagPlayState isPlaying(SonosChannelPlayHandle* playHandler);
         uint8_t getChannelIndex();
+        bool isOnline() const;
    
 };

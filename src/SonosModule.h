@@ -1,6 +1,7 @@
 #pragma once
 #include "OpenKNX.h"
 #include "ChannelOwnerModule.h"
+#include "LedFunctionSonosOnlineState.h"
 #include "SonosApi.h"
 #if USE_ESP_ASNC_WEB_SERVER 
 #include <ESPAsyncWebServer.h>
@@ -16,6 +17,7 @@ class SonosChannel;
 class SonosModule : public SonosChannelOwnerModule
 {
     SonosApi _sonosApi;
+    LedFunctionSonosOnlineState _statusLedSonosOnlineState;
     bool _channelSetupCalled = false;
     volatile bool _channelSetup1Called = false;
     bool _networkConnected = false;
