@@ -22,6 +22,7 @@ class SonosChannel : public OpenKNX::Channel, protected SonosApiNotificationHand
         SonosTrackInfo _lastTrackInfo;
         SonosApiPlayState _lastPlayState;
         unsigned long _stopCounter = 0;
+        unsigned long _waitForSetNotifiationHandler = 0;
         unsigned int _playAndTrackChangeCounter = 1;
         void notificationVolumeChanged(SonosSpeaker* speaker, uint8_t volume) override;
         void notificationMuteChanged(SonosSpeaker* speaker, boolean mute) override;

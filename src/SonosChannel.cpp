@@ -56,10 +56,23 @@ void SonosChannel::updateLockState(bool initialize)
     {
         KoSON_CHPlayFeedback.valueCompare(false, DPT_Start);   
     }
+    if (initialize || _locked)
+    {
+        _waitForSetNotifiationHandler = 0;
 #ifndef SONOS_DISABLE_CALLBACK
-    _sonosSpeaker->setCallback(_locked ? nullptr : this);
+        if (_locked)
+            logDebugP("Removing callback");
+        else
+            logDebugP("Setting callback");
+        _sonosSpeaker->setCallback(_locked ? nullptr : this);
 #endif
+    }
+    else
+    {
+        _waitForSetNotifiationHandler = max(1UL, millis());
+    }
 }
+
 
 void SonosChannel::setup()
 { 
@@ -117,10 +130,10 @@ void SonosChannel::loop()
     {
         _lastPingTime = 0;
         _forcePing = false;
-        logDebugP("Pinging speaker with IP %s", _sonosSpeaker->getSpeakerIP().toString().c_str());
+        // logDebugP("Pinging speaker with IP %s", _sonosSpeaker->getSpeakerIP().toString().c_str());
         openknxNetwork.ping(_sonosSpeaker->getSpeakerIP(),
             [this](IPAddress ip, bool reachable) {
-                logDebugP("Pinging speaker with IP %s is %s", _sonosSpeaker->getSpeakerIP().toString().c_str(), reachable ? "reachable" : "unreachable");
+                // logDebugP("Pinging speaker with IP %s is %s", _sonosSpeaker->getSpeakerIP().toString().c_str(), reachable ? "reachable" : "unreachable");
                 this->online(reachable);
                 _lastPingTime = millis();
             }, 2);
@@ -128,6 +141,15 @@ void SonosChannel::loop()
     }
     if (_locked)
         return;
+    if (_waitForSetNotifiationHandler != 0 && millis() - _waitForSetNotifiationHandler > 5000)
+    {
+        _waitForSetNotifiationHandler = 0;
+        if (_locked)
+            logDebugP("Removing callback");
+        else
+            logDebugP("Setting callback");
+        _sonosSpeaker->setCallback(this); 
+    }
     _sonosSpeaker->loop();
 }
 
