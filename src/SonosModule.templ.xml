@@ -153,10 +153,10 @@
               <ComObjectRef Id="%AID%_O-%TT%%CC%019_R-%TT%%CC%01901" RefId="%AID%_O-%TT%%CC%019" Text="{{0: Lautsprecher %C%}}: Benachrichtigung Nr starten"            TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
           
               <!-- Channel enabled -->
-              <ComObjectRef Id="%AID%_O-%TT%%CC%020_R-%TT%%CC%02001" RefId="%AID%_O-%TT%%CC%020" />
+              <ComObjectRef Id="%AID%_O-%TT%%CC%020_R-%TT%%CC%02001" RefId="%AID%_O-%TT%%CC%020"  Text="{{0: Lautsprecher %C%}}: Kanal aktivieren"                    TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
 
               <!-- Online Status -->
-              <ComObjectRef Id="%AID%_O-%TT%%CC%021_R-%TT%%CC%02101" RefId="%AID%_O-%TT%%CC%021" />
+              <ComObjectRef Id="%AID%_O-%TT%%CC%021_R-%TT%%CC%02101" RefId="%AID%_O-%TT%%CC%021" Text="{{0: Lautsprecher %C%}}: Online Status" TextParameterRefId="%AID%_P-%TT%%CC%002_R-%TT%%CC%00201" />
 
             </ComObjectRefs>
           </Static>
