@@ -78,6 +78,29 @@ bool SonosModule::processCommand(const std::string cmd, bool diagnoseKo)
         _sonosApi.setDebugSerial(nullptr);
         return true;
     }
+    if (cmd == "son")
+    {
+        if (isInitialized())
+        {
+            for (uint8_t i = 0; i < getNumberOfChannels(); i++)
+            {
+                auto channel = (SonosChannel*) getChannel(i);
+                if (channel != nullptr)
+                {
+                    logInfoP("Channel %d: %s (%s)", i + 1, channel->speakerIP().toString().c_str(), channel->isOnline() ? "online" : "offline");
+                }
+                else
+                {
+                    logInfoP("Channel %d: disabled", i + 1);
+                }
+            }
+        }
+        else
+        {
+            logInfoP("Not initialized");
+        }
+        return true;
+    }
     if (cmd.rfind("son", 0) == 0)
     {
         auto channelString = cmd.substr(3);
@@ -106,6 +129,7 @@ bool SonosModule::processCommand(const std::string cmd, bool diagnoseKo)
 
 void SonosModule::showHelp()
 {
+    openknx.console.printHelpLine("son", "Show sonos channels");
     openknx.console.printHelpLine("son<CC> uid", "Show sonos UID of channel CC. i.e. son01 uid");
     openknx.console.printHelpLine("son<CC> vol", "Show volume of channel CC. i.e. son01 vol");
     openknx.console.printHelpLine("son<CC> vol <XXX>", "Set volume of channel CC. i.e. son01 vol 17");
