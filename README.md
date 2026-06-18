@@ -4,6 +4,10 @@ This module provides function to control of Sonsos speaker via the unoffical loc
 
 ## Release Notes
 
+- 0.5.1 Fix: Disabled sonos online check is still active
+- 0.5.1 Debug: Improve error logging
+- 0.5.1 Fix: Memory leak in case of errors
+- 0.5.1 Fix: Crash on invalid body response from Sonos speaker
 - 0.5 Feature: Sonos Speaker Online State LED 
 - 0.5 Feature: Online check of Sonos speakers
 - 0.4 Fix: Playing feedback does not work if URL contains &amp;amp;

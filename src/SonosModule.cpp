@@ -2,6 +2,7 @@
 #include "SonosChannel.h"
 #include "NetworkModule.h"
 #include "WiFi.h"
+#include "ConsoleWriterStream.h"
 
 const std::string SonosModule::name()
 {
@@ -28,12 +29,16 @@ OpenKNX::Channel *SonosModule::createChannel(uint8_t _channelIndex /* this param
     return channel;
 }
 
+
 void SonosModule::setup()
 {
-    initialize(ParamSON_VisibleChannels);
+    _sonosApi.setErrorSerial(new ConsoleWriterStream("SonosAPI", true));
+    _debugWriter = new ConsoleWriterStream("SonosAPI", false);
 #ifdef OPENKNX_SONOS_DEBUG
-    _sonosApi.setDebugSerial(&Serial);
+    _sonosApi.setDebugSerial(_debugWriter);
 #endif
+    initialize(ParamSON_VisibleChannels);
+   
     SonosChannelOwnerModule::setup();
     _channelSetupCalled = true;
 }
@@ -70,7 +75,7 @@ bool SonosModule::processCommand(const std::string cmd, bool diagnoseKo)
 {
     if (cmd == "son debug")
     {
-        _sonosApi.setDebugSerial(&Serial);
+        _sonosApi.setDebugSerial(_debugWriter);
         return true;
     }
     if (cmd == "son nodebug")

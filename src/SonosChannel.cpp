@@ -96,15 +96,14 @@ void SonosChannel::setup()
     }
     if (ParamSON_CHDisableOnlineMonitor)
     {
-        _online = true; // Assume always online
+        _online = true; // assume always online if monitor is disabled
     }
     else
     {
         KoSON_CHOnline.value(_online, DPT_Alarm);
-
+        if (_enabled)
+            _forcePing = true;
     }
-    if (_enabled)
-        _forcePing = true;
     updateLockState(true);
 }
 
@@ -126,7 +125,7 @@ void SonosChannel::loop()
 {
     if (_sonosSpeaker == nullptr)
         return;
-    if (_enabled && (_lastPingTime != 0 && millis() - _lastPingTime > 15000 || _forcePing))
+    if (_enabled && (_lastPingTime != 0 && millis() - _lastPingTime > 15000 || _forcePing) && openknxNetwork.connected())
     {
         _lastPingTime = 0;
         _forcePing = false;

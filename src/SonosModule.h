@@ -13,9 +13,11 @@
 #error "Sonos Module requires OPENKNX_PING"
 #endif
 class SonosChannel;
+class ConsoleWriterStream;
 
 class SonosModule : public SonosChannelOwnerModule
 {
+    ConsoleWriterStream* _debugWriter = nullptr;
     SonosApi _sonosApi;
     LedFunctionSonosOnlineState _statusLedSonosOnlineState;
     bool _channelSetupCalled = false;
