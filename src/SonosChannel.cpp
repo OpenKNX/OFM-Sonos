@@ -431,8 +431,6 @@ void SonosChannel::notificationTrackChanged(SonosSpeaker* speaker, SonosTrackInf
             }
         }
     }
-    Serial.print("Source State: ");
-    Serial.println(sourceNumber);
     if ((_singleControl || _groupControl) && (uint8_t)KoSON_CHSourceState.value(DPT_Value_1_Ucount) != sourceNumber)
     {
         KoSON_CHSourceState.value(sourceNumber, DPT_Value_1_Ucount);
